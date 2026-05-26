@@ -10,6 +10,7 @@ class MenusSeeder extends Seeder
     public function run(): void
     {
         DB::table('menus')->insert([
+            ['id' => 17, 'parent_id' => null, 'name' => '仪表盘', 'type' => 'menu', 'path' => '/dashboard', 'icon' => 'Dashboard', 'permission' => 'dashboard.index', 'sort_order' => 0, 'created_at' => now(), 'updated_at' => now()],
             ['id' => 1, 'parent_id' => null, 'name' => '系统管理', 'type' => 'catalog', 'path' => null, 'icon' => 'Setting', 'permission' => null, 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
             ['id' => 2, 'parent_id' => 1, 'name' => '用户管理', 'type' => 'menu', 'path' => '/users', 'icon' => 'User', 'permission' => 'users.index', 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
             ['id' => 3, 'parent_id' => 2, 'name' => '查看用户', 'type' => 'permission', 'path' => null, 'icon' => null, 'permission' => 'users.show', 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
