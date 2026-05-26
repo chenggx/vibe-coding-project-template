@@ -102,7 +102,10 @@ class AuthControllerTest extends TestCase
             'email' => 'not-an-email',
         ]);
 
-        $response->assertStatus(422);
+        $response->assertStatus(422)
+            ->assertJsonPath('code', 422)
+            ->assertJsonPath('data', null)
+            ->assertJsonPath('message', fn ($message) => str_contains($message, '邮箱'));
     }
 
     public function test_me_success(): void
