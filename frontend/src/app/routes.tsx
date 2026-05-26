@@ -1,0 +1,177 @@
+import React, { Suspense, useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Spin } from 'antd';
+import { useAppDispatch, useAppSelector } from '@/hooks';
+import { fetchCurrentUser } from '@/modules/auth/slice';
+import { getToken } from '@/utils/token';
+
+// Lazy loaded pages
+const LoginPage = React.lazy(
+  () => import('@/modules/auth/pages/LoginPage'),
+);
+const DashboardPage = React.lazy(
+  () => import('@/modules/dashboard/pages/DashboardPage'),
+);
+const UserListPage = React.lazy(
+  () => import('@/modules/user/pages/UserListPage'),
+);
+const RoleListPage = React.lazy(
+  () => import('@/modules/role/pages/RoleListPage'),
+);
+const MenuListPage = React.lazy(
+  () => import('@/modules/menu/pages/MenuListPage'),
+);
+
+function LazyLoader({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense
+      fallback={
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh',
+          }}
+        >
+          <Spin size="large" />
+        </div>
+      }
+    >
+      {children}
+    </Suspense>
+  );
+}
+
+// Route permission mapping
+const routePermissionMap: Record<string, string> = {
+  '/dashboard': 'dashboard.index',
+  '/users': 'users.index',
+  '/roles': 'roles.index',
+  '/menus': 'menus.index',
+};
+
+function AuthGuard({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, loading, permissions, user } = useAppSelector(
+    (state) => state.auth,
+  );
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const token = getToken();
+    if (token && !user) {
+      dispatch(fetchCurrentUser());
+    }
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated && getToken() === null) {
+      navigate('/login', { replace: true, state: { from: location } });
+    }
+  }, [isAuthenticated, loading, navigate, location]);
+
+  if (loading && !user) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
+        <Spin size="large" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  // Check route permission
+  const requiredPermission = routePermissionMap[location.pathname];
+  if (
+    requiredPermission &&
+    !user?.is_super_admin &&
+    !permissions.includes(requiredPermission)
+  ) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
+        无权访问
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+}
+
+// Wrapper to use AppLayout
+import AppLayout from '@/components/layout/AppLayout';
+
+export default function AppRoutes() {
+  return (
+    <Routes>
+      <Route
+        path="/login"
+        element={
+          <LazyLoader>
+            <LoginPage />
+          </LazyLoader>
+        }
+      />
+      <Route
+        path="/"
+        element={
+          <AuthGuard>
+            <AppLayout />
+          </AuthGuard>
+        }
+      >
+        <Route index element={<Navigate to="/dashboard" replace />} />
+        <Route
+          path="dashboard"
+          element={
+            <LazyLoader>
+              <DashboardPage />
+            </LazyLoader>
+          }
+        />
+        <Route
+          path="users"
+          element={
+            <LazyLoader>
+              <UserListPage />
+            </LazyLoader>
+          }
+        />
+        <Route
+          path="roles"
+          element={
+            <LazyLoader>
+              <RoleListPage />
+            </LazyLoader>
+          }
+        />
+        <Route
+          path="menus"
+          element={
+            <LazyLoader>
+              <MenuListPage />
+            </LazyLoader>
+          }
+        />
+      </Route>
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+    </Routes>
+  );
+}

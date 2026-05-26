@@ -1,0 +1,15 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.button {
+  height: 48px;
+  border-color: var(--color-border) !important;
+}
+
+.button:hover {
+  border-color: var(--color-accent) !important;
+  color: var(--color-accent) !important;
+}

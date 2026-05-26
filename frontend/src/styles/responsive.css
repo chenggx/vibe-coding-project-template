@@ -1,0 +1,18 @@
+/* 响应式工具类 */
+.content-area {
+  padding: 24px;
+  min-height: calc(100vh - 64px);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 576px) {
+  .content-area {
+    padding: 16px;
+  }
+}

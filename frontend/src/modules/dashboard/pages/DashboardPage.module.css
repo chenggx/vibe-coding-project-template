@@ -1,0 +1,17 @@
+.dashboard {
+  max-width: 1200px;
+}
+
+.card {
+  height: 100%;
+}
+
+.card :global(.ant-card-head) {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.card :global(.ant-card-head-title) {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}

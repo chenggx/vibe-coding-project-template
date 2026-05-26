@@ -1,0 +1,31 @@
+:root {
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #666666;
+  --color-bg-page: #f8f5f0;
+  --color-bg-card: #ffffff;
+  --color-border: #e8e8e3;
+  --color-accent: #c45c3e;
+  --color-accent-hover: #a84d32;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+code, pre, .mono {
+  font-family: 'JetBrains Mono', monospace;
+}
