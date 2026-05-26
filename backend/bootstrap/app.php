@@ -2,9 +2,12 @@
 
 use App\Http\Middleware\CheckMenuPermission;
 use App\Http\Middleware\EnsureUserIsActive;
+use App\Support\ApiResponse;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -20,5 +23,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->renderable(function (ValidationException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return ApiResponse::error(422, $e->getMessage(), 422);
+            }
+
+            return null;
+        });
     })->create();
