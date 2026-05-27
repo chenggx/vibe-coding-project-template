@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { Modal, Form, Input, Select, Switch, DatePicker, message } from 'antd';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppDispatch, useAppSelector, usePermission } from '@/hooks';
 import { createUser, updateUser } from '../slice';
+import { fetchRoles } from '@/modules/role/slice';
 import ImageUploader from '@/components/common/ImageUploader';
 import dayjs from 'dayjs';
 import type { User, CreateUserDto } from '../types';
@@ -17,6 +18,13 @@ export default function UserFormModal({ open, user, onCancel, onSuccess }: UserF
   const [form] = Form.useForm();
   const dispatch = useAppDispatch();
   const { list: roles } = useAppSelector((state) => state.role);
+  const { hasPermission } = usePermission();
+
+  useEffect(() => {
+    if (open && hasPermission('roles.index')) {
+      dispatch(fetchRoles({ per_page: 100 }));
+    }
+  }, [open, dispatch, hasPermission]);
 
   useEffect(() => {
     if (open) {
@@ -28,7 +36,7 @@ export default function UserFormModal({ open, user, onCancel, onSuccess }: UserF
           status: user.status,
           expires_at: user.expires_at ? dayjs(user.expires_at) : null,
           remarks: user.remarks,
-          role_ids: user.roles.map((r) => r.id),
+          role_ids: user.roles[0]?.id,
         });
       } else {
         form.resetFields();
@@ -48,8 +56,10 @@ export default function UserFormModal({ open, user, onCancel, onSuccess }: UserF
         status: values.status,
         expires_at: values.expires_at ? values.expires_at.format('YYYY-MM-DD') : undefined,
         remarks: values.remarks || undefined,
-        role_ids: values.role_ids || [],
       };
+      if (hasPermission('roles.index')) {
+        dto.role_ids = values.role_ids !== undefined ? [values.role_ids] : [];
+      }
 
       if (user) {
         const updateDto = { ...dto };
@@ -108,13 +118,14 @@ export default function UserFormModal({ open, user, onCancel, onSuccess }: UserF
         <Form.Item name="remarks" label="备注">
           <Input.TextArea rows={3} placeholder="备注" />
         </Form.Item>
-        <Form.Item name="role_ids" label="角色">
-          <Select
-            mode="multiple"
-            placeholder="选择角色"
-            options={roles.map((r) => ({ label: r.display_name, value: r.id }))}
-          />
-        </Form.Item>
+        {hasPermission('roles.index') && (
+          <Form.Item name="role_ids" label="角色">
+            <Select
+              placeholder="选择角色"
+              options={roles.map((r) => ({ label: r.display_name, value: r.id }))}
+            />
+          </Form.Item>
+        )}
       </Form>
     </Modal>
   );

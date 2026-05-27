@@ -93,3 +93,7 @@ php artisan admin:reset-password
 - 开发时前端代理 `/api` 到 `http://localhost:8000`
 - 生产环境通过 `VITE_API_BASE_URL` 环境变量配置
 - 后端 CORS 已配置允许 `http://localhost:5173`
+
+## 业务规则
+
+- **用户只能拥有一个角色。** 虽然数据库层面 `user_has_roles` 是多对多关联表，但产品层面限制每个用户只能分配一个角色。创建/编辑用户时前端表单使用单选 Select，提交时 `role_ids` 最多只包含一个元素。

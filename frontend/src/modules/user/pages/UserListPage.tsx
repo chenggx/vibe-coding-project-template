@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector, usePagination } from '@/hooks';
 import PermissionButton from '@/components/common/PermissionButton';
 import PermissionWrapper from '@/components/common/PermissionWrapper';
 import { fetchUsers, deleteUser } from '../slice';
-import { fetchRoles } from '@/modules/role/slice';
 import UserFormModal from '../components/UserFormModal';
 import RoleTag from '../components/RoleTag';
 import type { User } from '../types';
@@ -20,10 +19,6 @@ export default function UserListPage() {
   const [searchTrigger, setSearchTrigger] = useState(0);
 
   const { current: page, pageSize } = pagination;
-
-  useEffect(() => {
-    dispatch(fetchRoles({ per_page: 100 }));
-  }, [dispatch]);
 
   useEffect(() => {
     const values = searchForm.getFieldsValue();
