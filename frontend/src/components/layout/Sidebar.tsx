@@ -47,9 +47,14 @@ function findOpenKeys(menus: MenuTree[], path: string): string[] {
   for (const menu of menus) {
     if (menu.path === path) return [];
     if (menu.children?.length) {
+      const directMatch = menu.children.some((c) => c.path === path);
+      if (directMatch) {
+        return [menu.path || menu.id.toString()];
+      }
       const childKeys = findOpenKeys(menu.children, path);
-      if (childKeys.length > 0)
+      if (childKeys.length > 0) {
         return [menu.path || menu.id.toString(), ...childKeys];
+      }
     }
   }
   return [];
