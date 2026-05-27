@@ -12,6 +12,9 @@ import type {
 import type { ApiError } from '@/services/api';
 
 function extractErrorMessage(err: unknown): string {
+  if (typeof err === 'string') {
+    return err;
+  }
   if (err && typeof err === 'object' && 'message' in err) {
     return (err as ApiError).message;
   }
@@ -164,18 +167,15 @@ const authSlice = createSlice({
         updateProfile.fulfilled,
         (state, action: PayloadAction<CurrentUserResponse>) => {
           state.loading = false;
-          state.user = {
-            id: action.payload.id,
-            name: action.payload.name,
-            email: action.payload.email,
-            avatar: action.payload.avatar,
-            status: action.payload.status,
-            expires_at: action.payload.expires_at,
-            remarks: action.payload.remarks,
-            created_at: action.payload.created_at,
-            updated_at: action.payload.updated_at,
-            roles: action.payload.roles,
-          };
+          if (state.user) {
+            state.user = {
+              ...state.user,
+              name: action.payload.name ?? state.user.name,
+              email: action.payload.email ?? state.user.email,
+              avatar: action.payload.avatar ?? state.user.avatar,
+              roles: action.payload.roles ?? state.user.roles,
+            };
+          }
         },
       )
       .addCase(updateProfile.rejected, (state, action) => {

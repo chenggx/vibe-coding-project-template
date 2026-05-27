@@ -10,7 +10,7 @@ class UpdateRequest extends FormRequest
 {
     public function rules(): array
     {
-        $id = $this->route('id');
+        $id = $this->route('role');
 
         return [
             'name' => 'required|string|max:255|unique:roles,name,'.$id,

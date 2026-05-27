@@ -22,11 +22,12 @@ export default function ProfilePage() {
   const handleAvatarUpload = async (file: File) => {
     try {
       const result = (await uploadApi.uploadFile(file)) as unknown as { url: string };
+      const currentName = form.getFieldValue('name') || user?.name || '';
       form.setFieldsValue({ avatar: result.url });
-      await dispatch(updateProfile({ name: user!.name, avatar: result.url })).unwrap();
+      await dispatch(updateProfile({ name: currentName, avatar: result.url })).unwrap();
       message.success('头像已更新');
     } catch (err) {
-      handleApiError(err);
+      handleApiError(err, message);
     }
     return false;
   };
@@ -36,13 +37,16 @@ export default function ProfilePage() {
     avatar?: string;
     current_password?: string;
     password?: string;
+    confirm_password?: string;
   }) => {
     try {
-      await dispatch(updateProfile(values)).unwrap();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { confirm_password: _, ...payload } = values;
+      await dispatch(updateProfile(payload)).unwrap();
       message.success('保存成功');
-      form.setFieldsValue({ current_password: undefined, password: undefined, confirm_password: undefined });
+      form.resetFields(['current_password', 'password', 'confirm_password']);
     } catch (err) {
-      handleApiError(err);
+      handleApiError(err, message);
     }
   };
 
