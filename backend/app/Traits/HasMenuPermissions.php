@@ -49,9 +49,24 @@ trait HasMenuPermissions
 
         $menus = Menu::whereIn('id', $menuIds)->get();
 
+        // 一次性加载全量菜单，在内存中上溯父级，避免 N+1 查询
+        $allMenus = Menu::all()->keyBy('id');
         $parentIds = $menus->pluck('parent_id')->filter()->unique()->toArray();
+        $visited = [];
+
         while (! empty($parentIds)) {
-            $parentMenus = Menu::whereIn('id', $parentIds)->get();
+            // 循环引用保护：跳过已访问过的节点
+            $parentIds = array_values(array_diff($parentIds, $visited));
+            if (empty($parentIds)) {
+                break;
+            }
+
+            $visited = array_merge($visited, $parentIds);
+            $parentMenus = collect($parentIds)
+                ->map(fn ($id) => $allMenus->get($id))
+                ->filter()
+                ->values();
+
             $menus = $menus->merge($parentMenus);
             $parentIds = $parentMenus->pluck('parent_id')->filter()->unique()->toArray();
         }

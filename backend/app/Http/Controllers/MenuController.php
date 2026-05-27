@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\Menu;
 use App\Http\Requests\Menu\StoreRequest;
 use App\Http\Requests\Menu\UpdateRequest;
+use App\Models\Menu;
 use App\Services\PermissionService;
 use App\Support\ApiResponse;
 use Illuminate\Http\Request;
@@ -21,7 +21,7 @@ class MenuController extends Controller
             ? Menu::all()
             : $user->menus();
 
-        $tree = $this->buildTree($menus);
+        $tree = Menu::toTree($menus);
         $filtered = $this->filterVisible($tree);
 
         return ApiResponse::success($filtered);
@@ -87,20 +87,6 @@ class MenuController extends Controller
         return ApiResponse::success(null, '删除成功');
     }
 
-    private function buildTree($menus, ?int $parentId = null): array
-    {
-        return $menus->where('parent_id', $parentId)
-            ->sortBy('sort_order')
-            ->values()
-            ->map(
-                fn ($item) => array_merge(
-                    $item->toArray(),
-                    ['children' => $this->buildTree($menus, $item->id)]
-                )
-            )
-            ->all();
-    }
-
     private function filterVisible(array $tree): array
     {
         $result = [];
@@ -122,7 +108,6 @@ class MenuController extends Controller
 
         return $result;
     }
-
 
     private function isDescendant(int $ancestorId, int $targetId): bool
     {

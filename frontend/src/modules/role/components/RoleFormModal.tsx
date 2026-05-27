@@ -67,7 +67,7 @@ export default function RoleFormModal({ open, role, allMenus, onCancel, onSucces
       open={open}
       onCancel={onCancel}
       onOk={handleSubmit}
-      destroyOnClose
+      destroyOnHidden
       width={600}
     >
       <Form form={form} layout="vertical">

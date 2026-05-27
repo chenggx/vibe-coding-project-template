@@ -28,42 +28,7 @@ class StoreRequest extends FormRequest
     {
         return [
             function (Validator $validator) {
-                $data = $validator->validated();
-                $type = $data['type'];
-
-                if ($type === 'catalog') {
-                    if (($data['permission'] ?? null) !== null) {
-                        abort(response()->json(['code' => 10007, 'message' => '目录类型不能有权限标识', 'data' => null]));
-                    }
-                    if (($data['path'] ?? null) !== null) {
-                        abort(response()->json(['code' => 10007, 'message' => '目录类型不能有路由路径', 'data' => null]));
-                    }
-                }
-
-                if ($type === 'menu') {
-                    if (empty($data['permission'])) {
-                        abort(response()->json(['code' => 10007, 'message' => '菜单类型必须有权限标识', 'data' => null]));
-                    }
-                    if (empty($data['path'])) {
-                        abort(response()->json(['code' => 10007, 'message' => '菜单类型必须有路由路径', 'data' => null]));
-                    }
-                }
-
-                if ($type === 'permission') {
-                    if (($data['path'] ?? null) !== null) {
-                        abort(response()->json(['code' => 10007, 'message' => '权限点类型不能有路由路径', 'data' => null]));
-                    }
-                    if (($data['icon'] ?? null) !== null) {
-                        abort(response()->json(['code' => 10007, 'message' => '权限点类型不能有图标', 'data' => null]));
-                    }
-                }
-
-                if (! empty($data['parent_id'])) {
-                    $parent = Menu::find($data['parent_id']);
-                    if ($parent && $parent->type === 'permission') {
-                        abort(response()->json(['code' => 10007, 'message' => '不能将节点挂在权限点下', 'data' => null]));
-                    }
-                }
+                Menu::validateMenuType($validator->validated());
             },
         ];
     }

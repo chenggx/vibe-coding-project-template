@@ -30,8 +30,10 @@ class PermissionService
         return cache()->remember(
             $this->getCacheKey($user),
             3600,
-            fn () => $user->menus()
-                ->pluck('permission')
+            fn () => $user->roles()->with('menus')->get()
+                ->pluck('menus.*.permission')
+                ->flatten()
+                ->unique()
                 ->filter()
                 ->values()
                 ->all()
@@ -45,6 +47,6 @@ class PermissionService
 
     public function clearAllPermissionCache(): void
     {
-        cache()->increment('permission_cache_version');
+        cache()->forever('permission_cache_version', $this->getCacheVersion() + 1);
     }
 }

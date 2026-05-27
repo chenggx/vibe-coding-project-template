@@ -86,7 +86,7 @@ export default function UserFormModal({ open, user, onCancel, onSuccess }: UserF
       open={open}
       onCancel={onCancel}
       onOk={handleSubmit}
-      destroyOnClose
+      destroyOnHidden
       width={600}
     >
       <Form form={form} layout="vertical" initialValues={{ status: true }}>

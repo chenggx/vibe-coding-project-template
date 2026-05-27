@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Services\PermissionService;
-use App\Support\ApiResponse;
 use App\Http\Requests\User\IndexRequest;
 use App\Http\Requests\User\StoreRequest;
 use App\Http\Requests\User\UpdateRequest;
+use App\Models\User;
+use App\Services\PermissionService;
+use App\Support\ApiResponse;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -111,10 +111,10 @@ class UserController extends Controller
             return ApiResponse::error(10005, '不能删除超级管理员');
         }
 
-        app(PermissionService::class)->clearUserPermissionCache($user);
-
         $user->roles()->detach();
         $user->delete();
+
+        app(PermissionService::class)->clearUserPermissionCache($user);
 
         return ApiResponse::success(null, '删除成功');
     }
