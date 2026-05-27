@@ -4,6 +4,7 @@ import menuReducer from '@/modules/menu/slice';
 import uploadReducer from '@/modules/upload/slice';
 import roleReducer from '@/modules/role/slice';
 import userReducer from '@/modules/user/slice';
+import themeReducer from '@/modules/theme/slice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   upload: uploadReducer,
   role: roleReducer,
   user: userReducer,
+  theme: themeReducer,
 });
 
 export default rootReducer;

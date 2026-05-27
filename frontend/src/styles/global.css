@@ -8,6 +8,16 @@
   --color-accent-hover: #a84d32;
 }
 
+[data-theme="dark"] {
+  --color-text-primary: #e8e8e8;
+  --color-text-secondary: #999999;
+  --color-bg-page: #141414;
+  --color-bg-card: #1f1f1f;
+  --color-border: #303030;
+  --color-accent: #d4765c;
+  --color-accent-hover: #e08f78;
+}
+
 * {
   margin: 0;
   padding: 0;
