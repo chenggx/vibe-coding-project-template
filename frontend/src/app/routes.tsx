@@ -128,7 +128,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   const requiredPermission = routePermissionMap[location.pathname];
   if (
     requiredPermission &&
-    !user?.is_super_admin &&
+    user?.id !== 1 &&
     !permissions.includes(requiredPermission)
   ) {
     return (

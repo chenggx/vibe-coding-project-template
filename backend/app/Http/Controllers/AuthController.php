@@ -61,7 +61,6 @@ class AuthController extends Controller
             'status' => $user->status,
             'expires_at' => $user->expires_at,
             'remarks' => $user->remarks,
-            'is_super_admin' => $user->is_super_admin,
             'roles' => $user->roles,
             'menus' => $menus,
         ]);

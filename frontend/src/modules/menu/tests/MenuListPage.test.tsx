@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import MenuListPage from '../pages/MenuListPage';
 import menuReducer from '../slice';
+import authReducer from '@/modules/auth/slice';
 
 vi.mock('@/utils/token', () => ({
   getToken: vi.fn(() => 'test-token'),
@@ -22,7 +23,18 @@ vi.mock('../slice', async (importOriginal) => {
 
 function createTestStore() {
   return configureStore({
-    reducer: { menu: menuReducer },
+    reducer: { menu: menuReducer, auth: authReducer },
+    preloadedState: {
+      auth: {
+        token: null,
+        user: { id: 1, name: 'Admin', email: 'admin@test.com', avatar: null, status: true, expires_at: null, remarks: null, created_at: '', updated_at: '', roles: [] },
+        permissions: [],
+        userMenus: [],
+        isAuthenticated: true,
+        loading: false,
+        error: null,
+      },
+    },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({ serializableCheck: false }),
   });

@@ -23,7 +23,6 @@ class User extends Authenticatable
         'status',
         'expires_at',
         'remarks',
-        'is_super_admin',
     ];
 
     protected $hidden = [
@@ -38,13 +37,12 @@ class User extends Authenticatable
             'password' => 'hashed',
             'status' => 'boolean',
             'expires_at' => 'datetime',
-            'is_super_admin' => 'boolean',
         ];
     }
 
     public function isSuperAdmin(): bool
     {
-        return $this->is_super_admin === true;
+        return $this->id === 1;
     }
 
     protected function email(): Attribute

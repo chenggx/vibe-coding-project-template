@@ -11,7 +11,7 @@ function createTestStore() {
     reducer: { auth: authReducer },
     preloadedState: {
       auth: {
-        user: { id: 1, name: 'Admin', is_super_admin: true },
+        user: { id: 1, name: 'Admin' },
         isAuthenticated: true,
         permissions: [],
         userMenus: [],

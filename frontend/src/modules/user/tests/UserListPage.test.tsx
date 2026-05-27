@@ -10,12 +10,24 @@ import authReducer from '@/modules/auth/slice';
 import menuReducer from '@/modules/menu/slice';
 import uploadReducer from '@/modules/upload/slice';
 
+vi.mock('@/hooks/usePermission', () => ({
+  usePermission: () => ({ hasPermission: () => true, permissions: [] }),
+}));
+
 vi.mock('@/hooks', () => ({
   useAppDispatch: () => vi.fn(),
   useAppSelector: (selector: (state: Record<string, unknown>) => unknown) =>
     selector({
       user: { list: [], meta: null, loading: false, error: null },
       role: { list: [], meta: null, loading: false, error: null },
+      auth: {
+        user: { id: 1, name: 'Admin', email: 'admin@test.com', avatar: null, status: true, expires_at: null, remarks: null, created_at: '', updated_at: '', roles: [] },
+        permissions: [],
+        userMenus: [],
+        isAuthenticated: true,
+        loading: false,
+        error: null,
+      },
     }),
   usePagination: () => ({
     current: 1,

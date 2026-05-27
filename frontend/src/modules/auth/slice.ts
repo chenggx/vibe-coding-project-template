@@ -115,7 +115,6 @@ const authSlice = createSlice({
             status: action.payload.status,
             expires_at: action.payload.expires_at,
             remarks: action.payload.remarks,
-            is_super_admin: action.payload.is_super_admin,
             created_at: action.payload.created_at,
             updated_at: action.payload.updated_at,
             roles: action.payload.roles,

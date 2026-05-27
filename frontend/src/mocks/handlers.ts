@@ -14,7 +14,7 @@ export const handlers = [
       code: 0,
       message: 'success',
       data: {
-        user: { id: 1, name: 'Admin', email: 'admin@example.com', status: true, expires_at: null, remarks: null, is_super_admin: true, created_at: '2026-05-20', updated_at: '2026-05-20', roles: [{ id: 1, name: 'super-admin', display_name: '超级管理员', description: null, created_at: '2026-05-20', updated_at: '2026-05-20' }] },
+        user: { id: 1, name: 'Admin', email: 'admin@example.com', status: true, expires_at: null, remarks: null, created_at: '2026-05-20', updated_at: '2026-05-20', roles: [{ id: 1, name: 'super-admin', display_name: '超级管理员', description: null, created_at: '2026-05-20', updated_at: '2026-05-20' }] },
         token: '1|test_token',
       },
     });

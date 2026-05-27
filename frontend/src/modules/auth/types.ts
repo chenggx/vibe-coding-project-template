@@ -11,7 +11,6 @@ export interface CurrentUserResponse {
   status: boolean;
   expires_at: string | null;
   remarks: string | null;
-  is_super_admin: boolean;
   created_at: string;
   updated_at: string;
   roles: Array<{

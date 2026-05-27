@@ -4,7 +4,7 @@ export function usePermission() {
   const { permissions, user } = useAppSelector((state) => state.auth);
 
   const hasPermission = (permission: string): boolean => {
-    if (user?.is_super_admin) return true;
+    if (user?.id === 1) return true;
     return permissions.includes(permission);
   };
 

@@ -35,7 +35,6 @@ const mockUser = {
   status: true,
   expires_at: null,
   remarks: null,
-  is_super_admin: false,
   created_at: '2024-01-01',
   updated_at: '2024-01-01',
   roles: [],

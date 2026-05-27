@@ -16,8 +16,6 @@ class CheckMenuPermissionTest extends TestCase
     {
         $user = new User;
         $user->id = 1;
-        $user->is_super_admin = true;
-
         $request = new Request;
         $request->setUserResolver(fn () => $user);
 

@@ -17,7 +17,6 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'avatar' => null,
             'status' => true,
-            'is_super_admin' => true,
             'expires_at' => null,
             'remarks' => null,
         ]);

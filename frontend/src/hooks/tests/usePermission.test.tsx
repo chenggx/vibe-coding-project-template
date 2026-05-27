@@ -27,7 +27,7 @@ function createWrapper(
 describe('usePermission', () => {
   it('超级管理员应始终返回 true', () => {
     const store = createTestStore({
-      user: { is_super_admin: true },
+      user: { id: 1 },
       permissions: [],
     });
     const { result } = renderHook(() => usePermission(), {
@@ -40,7 +40,7 @@ describe('usePermission', () => {
 
   it('普通用户应按权限数组判断', () => {
     const store = createTestStore({
-      user: { is_super_admin: false },
+      user: { id: 2 },
       permissions: ['users.index', 'users.create'],
     });
     const { result } = renderHook(() => usePermission(), {
