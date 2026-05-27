@@ -42,6 +42,18 @@ function buildMenuItems(menus: MenuTree[]) {
     });
 }
 
+function findOpenKeys(menus: MenuTree[], path: string): string[] {
+  for (const menu of menus) {
+    if (menu.path === path) return [];
+    if (menu.children?.length) {
+      const childKeys = findOpenKeys(menu.children, path);
+      if (childKeys.length > 0)
+        return [menu.path || menu.id.toString(), ...childKeys];
+    }
+  }
+  return [];
+}
+
 export default function Sidebar({ collapsed }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -55,29 +67,6 @@ export default function Sidebar({ collapsed }: SidebarProps) {
     }
   };
 
-  // Find open keys based on current path
-  const findOpenKeys = (
-    menus: MenuTree[],
-    path: string,
-  ): string[] => {
-    for (const menu of menus) {
-      if (menu.path === path) return [];
-      if (menu.children?.length) {
-        const childKeys = findOpenKeys(menu.children, path);
-        if (childKeys.length > 0)
-          return [
-            menu.path || menu.id.toString(),
-            ...childKeys,
-          ];
-      }
-    }
-    return [];
-  };
-
-  const openKeys = collapsed
-    ? []
-    : findOpenKeys(userMenus, location.pathname);
-
   return (
     <div
       className={`${styles.sidebar} ${collapsed ? styles.collapsed : ''}`}
@@ -86,9 +75,12 @@ export default function Sidebar({ collapsed }: SidebarProps) {
         {collapsed ? 'A' : 'Admin'}
       </div>
       <Menu
+        key={`${location.pathname}-${collapsed}`}
         mode="inline"
         selectedKeys={[location.pathname]}
-        defaultOpenKeys={openKeys}
+        defaultOpenKeys={
+          collapsed ? [] : findOpenKeys(userMenus, location.pathname)
+        }
         items={menuItems}
         onClick={handleMenuClick}
         inlineCollapsed={collapsed}

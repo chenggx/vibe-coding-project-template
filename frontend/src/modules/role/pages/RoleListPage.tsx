@@ -9,7 +9,7 @@ import type { Role } from '../types';
 
 export default function RoleListPage() {
   const dispatch = useAppDispatch();
-  const { list, meta, loading, currentRole } = useAppSelector((state) => state.role);
+  const { list, meta, loading } = useAppSelector((state) => state.role);
   const { allMenus } = useAppSelector((state) => state.menu);
   const pagination = usePagination();
   const [modalOpen, setModalOpen] = useState(false);
@@ -33,8 +33,7 @@ export default function RoleListPage() {
       setEditingRole(detail);
       setModalOpen(true);
     } catch {
-      setEditingRole(role);
-      setModalOpen(true);
+      message.error('获取角色详情失败');
     }
   };
 

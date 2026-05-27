@@ -27,7 +27,7 @@ export const login = createAsyncThunk(
         credentials,
       )) as unknown as LoginResponse;
       setToken(response.token);
-      dispatch(fetchCurrentUser());
+      await dispatch(fetchCurrentUser()).unwrap();
       return response;
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '登录失败';
@@ -129,6 +129,9 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = false;
         state.token = null;
+        state.user = null;
+        state.permissions = [];
+        state.userMenus = [];
         state.error = action.payload as string;
       });
   },

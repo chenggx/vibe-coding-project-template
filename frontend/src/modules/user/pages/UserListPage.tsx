@@ -15,8 +15,13 @@ export default function UserListPage() {
   const [searchForm] = Form.useForm();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [searchTrigger, setSearchTrigger] = useState(0);
 
   const { current: page, pageSize } = pagination;
+
+  useEffect(() => {
+    dispatch(fetchRoles({ per_page: 100 }));
+  }, [dispatch]);
 
   useEffect(() => {
     const values = searchForm.getFieldsValue();
@@ -25,23 +30,17 @@ export default function UserListPage() {
       page,
       per_page: pageSize,
     }));
-    dispatch(fetchRoles({ per_page: 100 }));
-  }, [dispatch, searchForm, page, pageSize]);
+  }, [dispatch, searchForm, page, pageSize, searchTrigger]);
 
   const handleSearch = () => {
     pagination.reset();
-    const values = searchForm.getFieldsValue();
-    dispatch(fetchUsers({
-      ...values,
-      page: 1,
-      per_page: pagination.pageSize,
-    }));
+    setSearchTrigger(t => t + 1);
   };
 
   const handleReset = () => {
     searchForm.resetFields();
     pagination.reset();
-    dispatch(fetchUsers({ page: 1, per_page: pagination.pageSize }));
+    setSearchTrigger(t => t + 1);
   };
 
   const handleAdd = () => {

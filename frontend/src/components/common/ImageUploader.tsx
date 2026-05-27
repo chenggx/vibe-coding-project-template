@@ -35,17 +35,27 @@ export default function ImageUploader({
     return true;
   };
 
-  const handleUpload = async (file: File) => {
+  const handleUpload = async ({
+    file,
+    onSuccess,
+    onError,
+  }: {
+    file: unknown;
+    onSuccess?: (body: unknown) => void;
+    onError?: (error: Error) => void;
+  }) => {
     setLoading(true);
     try {
-      const result = (await uploadApi.uploadFile(file)) as unknown as {
+      const result = (await uploadApi.uploadFile(file as File)) as unknown as {
         url: string;
       };
       onChange(result.url);
       message.success('上传成功');
+      onSuccess?.(result);
     } catch (err: unknown) {
       const messageText = err instanceof Error ? err.message : '上传失败';
       message.error(messageText);
+      onError?.(new Error(messageText));
     } finally {
       setLoading(false);
     }
@@ -83,7 +93,9 @@ export default function ImageUploader({
           accept={accept}
           showUploadList={false}
           beforeUpload={beforeUpload}
-          customRequest={({ file }) => handleUpload(file as File)}
+          customRequest={({ file, onSuccess, onError }) =>
+            handleUpload({ file, onSuccess, onError })
+          }
         >
           <Button icon={<UploadOutlined />} loading={loading}>
             上传头像

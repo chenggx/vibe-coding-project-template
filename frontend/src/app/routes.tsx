@@ -22,10 +22,22 @@ const MenuListPage = React.lazy(
   () => import('@/modules/menu/pages/MenuListPage'),
 );
 
-function LazyLoader({ children }: { children: React.ReactNode }) {
-  return (
-    <Suspense
-      fallback={
+class RouteErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
         <div
           style={{
             display: 'flex',
@@ -34,12 +46,34 @@ function LazyLoader({ children }: { children: React.ReactNode }) {
             height: '100vh',
           }}
         >
-          <Spin size="large" />
+          页面加载失败，请刷新重试
         </div>
-      }
-    >
-      {children}
-    </Suspense>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function LazyLoader({ children }: { children: React.ReactNode }) {
+  return (
+    <RouteErrorBoundary>
+      <Suspense
+        fallback={
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100vh',
+            }}
+          >
+            <Spin size="large" />
+          </div>
+        }
+      >
+        {children}
+      </Suspense>
+    </RouteErrorBoundary>
   );
 }
 
@@ -66,7 +100,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   }, [dispatch, user]);
 
   useEffect(() => {
-    if (!loading && !isAuthenticated && getToken() === null) {
+    if (!loading && !isAuthenticated) {
       navigate('/login', { replace: true, state: { from: location } });
     }
   }, [isAuthenticated, loading, navigate, location]);

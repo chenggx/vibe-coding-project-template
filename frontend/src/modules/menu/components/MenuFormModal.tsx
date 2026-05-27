@@ -100,7 +100,7 @@ export default function MenuFormModal({
       open={open}
       onCancel={onCancel}
       onOk={handleSubmit}
-      destroyOnHidden
+      destroyOnClose
       width={600}
     >
       <Form

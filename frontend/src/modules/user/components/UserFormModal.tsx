@@ -44,7 +44,7 @@ export default function UserFormModal({ open, user, onCancel, onSuccess }: UserF
         name: values.name,
         email: values.email,
         password: values.password || '',
-        avatar: values.avatar || undefined,
+        avatar: values.avatar ?? undefined,
         status: values.status,
         expires_at: values.expires_at ? values.expires_at.format('YYYY-MM-DD') : undefined,
         remarks: values.remarks || undefined,

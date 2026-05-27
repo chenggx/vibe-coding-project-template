@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import MenuFormModal from '../components/MenuFormModal';
 import menuReducer from '../slice';
+import type { MenuTree } from '@/types/menu';
 
 vi.mock('@/utils/token', () => ({
   getToken: vi.fn(() => 'test-token'),
@@ -174,5 +175,73 @@ describe('MenuFormModal', () => {
     });
     expect(screen.queryByText('图标')).not.toBeInTheDocument();
     expect(screen.getByText('权限标识')).toBeInTheDocument();
+  });
+
+  it('关闭弹窗后再次打开新增模式应显示空白初始值', async () => {
+    const menu: MenuTree = {
+      id: 1,
+      parent_id: null,
+      name: '用户管理',
+      type: 'menu',
+      path: '/users',
+      icon: 'User',
+      permission: 'users.index',
+      sort_order: 1,
+      meta: null,
+      created_at: '2026-01-01',
+      updated_at: '2026-01-01',
+      children: [],
+    };
+
+    const { rerender } = renderWithProviders(
+      <MenuFormModal
+        open={true}
+        menu={menu}
+        allMenus={[]}
+        onCancel={vi.fn()}
+        onSuccess={vi.fn()}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('用户管理')).toBeInTheDocument();
+    });
+
+    // Close modal
+    rerender(
+      <Provider store={createTestStore()}>
+        <BrowserRouter>
+          <MenuFormModal
+            open={false}
+            menu={menu}
+            allMenus={[]}
+            onCancel={vi.fn()}
+            onSuccess={vi.fn()}
+          />
+        </BrowserRouter>
+      </Provider>,
+    );
+
+    // Reopen as create
+    rerender(
+      <Provider store={createTestStore()}>
+        <BrowserRouter>
+          <MenuFormModal
+            open={true}
+            menu={null}
+            allMenus={[]}
+            onCancel={vi.fn()}
+            onSuccess={vi.fn()}
+          />
+        </BrowserRouter>
+      </Provider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('新增菜单')).toBeInTheDocument();
+    });
+
+    const nameInput = screen.getByLabelText('菜单名称') as HTMLInputElement;
+    expect(nameInput.value).toBe('');
   });
 });

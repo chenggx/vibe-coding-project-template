@@ -173,6 +173,36 @@ describe('authSlice', () => {
       token: 'test-token',
       isAuthenticated: true,
       loading: true,
+      user: {
+        id: 1,
+        name: 'Admin',
+        email: 'admin@test.com',
+        avatar: null,
+        status: true,
+        expires_at: null,
+        remarks: null,
+        is_super_admin: true,
+        created_at: '2026-01-01',
+        updated_at: '2026-01-01',
+        roles: [],
+      },
+      permissions: ['user.view'],
+      userMenus: [
+        {
+          id: 1,
+          parent_id: null,
+          name: '用户管理',
+          type: 'menu',
+          path: '/users',
+          icon: 'User',
+          permission: 'user.view',
+          sort_order: 1,
+          meta: null,
+          created_at: '2026-01-01',
+          updated_at: '2026-01-01',
+          children: [],
+        },
+      ],
     };
     const action = {
       type: fetchCurrentUser.rejected.type,
@@ -182,6 +212,9 @@ describe('authSlice', () => {
     expect(result.loading).toBe(false);
     expect(result.isAuthenticated).toBe(false);
     expect(result.token).toBeNull();
+    expect(result.user).toBeNull();
+    expect(result.permissions).toEqual([]);
+    expect(result.userMenus).toEqual([]);
     expect(result.error).toBe('获取用户信息失败');
   });
 });

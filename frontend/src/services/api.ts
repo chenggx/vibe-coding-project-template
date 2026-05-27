@@ -5,6 +5,15 @@ export interface ApiError extends Error {
   code: number;
 }
 
+let isRedirecting = false;
+
+function redirectToLogin() {
+  if (isRedirecting) return;
+  isRedirecting = true;
+  clearToken();
+  window.location.href = '/login';
+}
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api',
   timeout: 10000,
@@ -21,28 +30,29 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => {
+    if (response.data === null || typeof response.data !== 'object') {
+      return response.data;
+    }
     const raw = response.data as Record<string, unknown>;
     const code = raw.code as number;
-    const message = raw.message as string;
+    const message = (raw.message as string) || '请求异常';
     const data = raw.data;
     if (code !== 0) {
       if (code === 10002) {
-        clearToken();
-        window.location.href = '/login';
+        redirectToLogin();
       }
       const error = new Error(message) as ApiError;
       error.code = code;
       return Promise.reject(error);
     }
-    if ('meta' in raw) {
+    if ('meta' in raw && raw.meta !== undefined) {
       return { data, meta: raw.meta };
     }
     return data;
   },
   (error) => {
     if (error.response?.status === 401) {
-      clearToken();
-      window.location.href = '/login';
+      redirectToLogin();
     }
     return Promise.reject(error);
   }
