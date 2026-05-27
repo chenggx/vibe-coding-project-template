@@ -1,0 +1,95 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## 项目概述
+
+前后端分离的后台管理系统。
+
+- **前端** (`frontend/`): React 19 + TypeScript + Vite + Redux Toolkit + Ant Design 6 + React Router 7
+- **后端** (`backend/`): Laravel 13 + Sanctum Token 认证 + SQLite（开发期）
+- 前端 dev server 代理 `/api` 到 `http://localhost:8000`
+- 后端已有独立的 `CLAUDE.md`，包含 Laravel 架构细节
+
+## 常用命令
+
+### 前端 (`frontend/`)
+
+```bash
+# 强制使用 pnpm
+pnpm install
+pnpm dev          # 启动 dev server (http://localhost:5173)
+pnpm build        # 生产构建
+pnpm test         # 运行 Vitest 测试（单次的）
+pnpm test:watch   # Vitest watch 模式
+pnpm lint         # ESLint 检查
+pnpm lint:fix     # ESLint 自动修复
+```
+
+### 后端 (`backend/`)
+
+```bash
+# 一键安装（依赖、密钥、迁移、前端构建）
+composer run setup
+
+# 开发模式（同时启动 serve / queue / pail / vite）
+composer run dev
+
+# 仅启动 API 服务
+php artisan serve
+
+# 运行测试
+php artisan test --compact
+
+# 代码风格检查与修复
+./vendor/bin/pint
+
+# 重置超级管理员密码
+php artisan admin:reset-password
+```
+
+## 前端架构
+
+### 目录约定
+
+- `src/modules/{auth,dashboard,menu,role,user}/` — 按领域模块组织，每个模块包含 `api.ts`、`slice.ts`、`types.ts`、`pages/`、`components/`
+- `src/services/api.ts` — Axios 实例，统一封装响应格式（code/message/data），自动携带 Bearer Token，401/10002 时跳转登录
+- `src/store/index.ts` — Redux Toolkit Store，`rootReducer` 聚合各模块 slice
+- `src/hooks/` — 自定义 hooks：`usePermission`、`useAppDispatch`、`useAppSelector`、`useMenuTree`、`usePagination`、`useResponsive`
+- `src/components/layout/` — 布局组件：`AppLayout`、`Sidebar`、`Header`
+- `src/components/common/` — 通用组件：`PermissionButton`、`PermissionWrapper`、`ImageUploader`
+- `src/mocks/` — MSW mock 服务，用于测试
+- `src/types/` — 全局类型定义
+- `tests/setup.ts` — Vitest 初始化，包含 `matchMedia` 和 `ResizeObserver` mock（Ant Design 需要）
+
+### 路由与权限
+
+- `src/app/routes.tsx` 定义路由表，页面使用 `React.lazy` 懒加载
+- `AuthGuard` 处理：
+  1. 无 Token → 跳转 `/login`
+  2. 有 Token 但无用户信息 → `dispatch(fetchCurrentUser())`
+  3. 路由权限校验（`routePermissionMap`）→ 非超管且无权限时显示"无权访问"
+- 权限映射：`/users` → `users.index`，`/roles` → `roles.index`，`/menus` → `menus.index`
+
+### API 响应处理
+
+后端统一返回 `{ code, message, data }`，`src/services/api.ts` 的响应拦截器已做封装：
+- `code === 0` 时直接返回 `data`
+- 分页响应返回 `{ data, meta }`
+- `code !== 0` 时抛出 `ApiError`（含 `code` 字段）
+
+### 模块 Slice 规范
+
+每个 Redux 模块遵循相同结构（以 `modules/user/` 为例）：
+- `api.ts` — 模块 API 调用函数
+- `slice.ts` — `createSlice` + `createAsyncThunk`，导出 actions 和 reducer
+- `types.ts` — 模块相关的 TypeScript 类型
+- `pages/` — 页面级组件
+- `components/` — 模块内可复用组件
+
+## 前后端对接
+
+- 认证方式：Sanctum Token。登录后后端返回 `token`，前端存储在 `localStorage`，通过 `Authorization: Bearer {token}` 发送
+- 开发时前端代理 `/api` 到 `http://localhost:8000`
+- 生产环境通过 `VITE_API_BASE_URL` 环境变量配置
+- 后端 CORS 已配置允许 `http://localhost:5173`
