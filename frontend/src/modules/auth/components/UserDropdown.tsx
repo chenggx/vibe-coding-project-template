@@ -24,7 +24,7 @@ export default function UserDropdown() {
   return (
     <Dropdown menu={{ items: menuItems }} placement="bottomRight">
       <Space style={{ cursor: 'pointer' }}>
-        <Avatar size="small" icon={<UserOutlined />} />
+        <Avatar size="small" src={user?.avatar} icon={<UserOutlined />} />
         <span>{user?.name ?? '未登录'}</span>
       </Space>
     </Dropdown>
