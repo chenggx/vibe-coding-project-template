@@ -72,7 +72,7 @@ export default function MenuTreeTable({
       render: (_, record) => (
         <Space>
           {record.type !== 'permission' && (
-            <PermissionWrapper permission="menus.create">
+            <PermissionWrapper permission="menus.store">
               <Button
                 size="small"
                 icon={<PlusOutlined />}
@@ -91,7 +91,7 @@ export default function MenuTreeTable({
               编辑
             </Button>
           </PermissionWrapper>
-          <PermissionWrapper permission="menus.delete">
+          <PermissionWrapper permission="menus.destroy">
             <Button
               size="small"
               danger

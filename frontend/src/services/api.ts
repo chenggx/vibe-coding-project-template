@@ -54,6 +54,14 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       redirectToLogin();
     }
+
+    const data = error.response?.data;
+    if (data && typeof data === 'object' && 'message' in data) {
+      const apiError = new Error(data.message as string) as ApiError;
+      apiError.code = (data.code as number) ?? -1;
+      return Promise.reject(apiError);
+    }
+
     return Promise.reject(error);
   }
 );

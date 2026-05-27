@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Card, Button, message, Modal } from 'antd';
+import { Card, message, Modal } from 'antd';
 import {
   PlusOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '@/hooks';
+import PermissionButton from '@/components/common/PermissionButton';
 import { fetchAllMenus, deleteMenu } from '../slice';
 import MenuTreeTable from '../components/MenuTreeTable';
 import MenuFormModal from '../components/MenuFormModal';
@@ -12,13 +13,19 @@ import type { MenuTree } from '@/types/menu';
 
 export default function MenuListPage() {
   const dispatch = useAppDispatch();
-  const { allMenus, loading } = useAppSelector((state) => state.menu);
+  const { allMenus, loading, error } = useAppSelector((state) => state.menu);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingMenu, setEditingMenu] = useState<MenuTree | null>(null);
 
   useEffect(() => {
     dispatch(fetchAllMenus());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (error) {
+      message.error(error);
+    }
+  }, [error]);
 
   const handleAdd = () => {
     setEditingMenu(null);
@@ -43,7 +50,7 @@ export default function MenuListPage() {
           message.success('删除成功');
         } catch (err: unknown) {
           const errorMsg =
-            err instanceof Error ? err.message : '删除失败';
+            typeof err === 'string' ? err : err instanceof Error ? err.message : '删除失败';
           message.error(errorMsg);
         }
       },
@@ -55,13 +62,14 @@ export default function MenuListPage() {
       <Card
         title="菜单管理"
         extra={
-          <Button
+          <PermissionButton
             type="primary"
             icon={<PlusOutlined />}
+            permission="menus.store"
             onClick={handleAdd}
           >
             新增菜单
-          </Button>
+          </PermissionButton>
         }
       >
         <MenuTreeTable

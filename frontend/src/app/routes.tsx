@@ -81,7 +81,7 @@ function LazyLoader({ children }: { children: React.ReactNode }) {
 const routePermissionMap: Record<string, string> = {
   '/users': 'users.index',
   '/roles': 'roles.index',
-  '/menus': 'menus.index',
+  '/menus': 'menus.all',
 };
 
 function AuthGuard({ children }: { children: React.ReactNode }) {

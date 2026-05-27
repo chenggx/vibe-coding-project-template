@@ -65,7 +65,7 @@ export default function UserFormModal({ open, user, onCancel, onSuccess }: UserF
       if (err && typeof err === 'object' && 'errorFields' in err) {
         return;
       }
-      const errorMsg = err instanceof Error ? err.message : '操作失败';
+      const errorMsg = typeof err === 'string' ? err : err instanceof Error ? err.message : '操作失败';
       message.error(errorMsg);
     }
   };

@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Card, Button, Table, Space, Modal, message } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector, usePagination } from '@/hooks';
+import PermissionButton from '@/components/common/PermissionButton';
+import PermissionWrapper from '@/components/common/PermissionWrapper';
 import { fetchRoles, fetchRoleDetail, deleteRole } from '../slice';
 import { fetchAllMenus } from '@/modules/menu/slice';
 import RoleFormModal from '../components/RoleFormModal';
@@ -32,8 +34,9 @@ export default function RoleListPage() {
       const detail = await dispatch(fetchRoleDetail(role.id)).unwrap();
       setEditingRole(detail);
       setModalOpen(true);
-    } catch {
-      message.error('获取角色详情失败');
+    } catch (err: unknown) {
+      const errorMsg = typeof err === 'string' ? err : err instanceof Error ? err.message : '获取角色详情失败';
+      message.error(errorMsg);
     }
   };
 
@@ -49,7 +52,7 @@ export default function RoleListPage() {
           await dispatch(deleteRole(role.id)).unwrap();
           message.success('删除成功');
         } catch (err: unknown) {
-          const errorMsg = err instanceof Error ? err.message : '删除失败';
+          const errorMsg = typeof err === 'string' ? err : err instanceof Error ? err.message : '删除失败';
           message.error(errorMsg);
         }
       },
@@ -68,8 +71,12 @@ export default function RoleListPage() {
       width: 150,
       render: (_: unknown, record: Role) => (
         <Space>
-          <Button size="small" onClick={() => handleEdit(record)}>编辑</Button>
-          <Button size="small" danger onClick={() => handleDelete(record)}>删除</Button>
+          <PermissionWrapper permission="roles.update">
+            <Button size="small" onClick={() => handleEdit(record)}>编辑</Button>
+          </PermissionWrapper>
+          <PermissionWrapper permission="roles.destroy">
+            <Button size="small" danger onClick={() => handleDelete(record)}>删除</Button>
+          </PermissionWrapper>
         </Space>
       ),
     },
@@ -80,9 +87,9 @@ export default function RoleListPage() {
       <Card
         title="角色管理"
         extra={
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+          <PermissionButton type="primary" icon={<PlusOutlined />} permission="roles.store" onClick={handleAdd}>
             新增角色
-          </Button>
+          </PermissionButton>
         }
       >
         <Table

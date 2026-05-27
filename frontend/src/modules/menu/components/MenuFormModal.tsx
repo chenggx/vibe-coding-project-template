@@ -90,7 +90,7 @@ export default function MenuFormModal({
         return;
       }
       const errorMsg =
-        err instanceof Error ? err.message : '操作失败';
+        typeof err === 'string' ? err : err instanceof Error ? err.message : '操作失败';
       message.error(errorMsg);
     }
   };

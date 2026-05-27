@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Card, Button, Table, Space, Switch, Modal, Form, Input, message } from 'antd';
 import { PlusOutlined, SearchOutlined, ReloadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector, usePagination } from '@/hooks';
+import PermissionButton from '@/components/common/PermissionButton';
+import PermissionWrapper from '@/components/common/PermissionWrapper';
 import { fetchUsers, deleteUser } from '../slice';
 import { fetchRoles } from '@/modules/role/slice';
 import UserFormModal from '../components/UserFormModal';
@@ -65,7 +67,7 @@ export default function UserListPage() {
           await dispatch(deleteUser(user.id)).unwrap();
           message.success('删除成功');
         } catch (err: unknown) {
-          const errorMsg = err instanceof Error ? err.message : '删除失败';
+          const errorMsg = typeof err === 'string' ? err : err instanceof Error ? err.message : '删除失败';
           message.error(errorMsg);
         }
       },
@@ -103,8 +105,12 @@ export default function UserListPage() {
       width: 150,
       render: (_: unknown, record: User) => (
         <Space>
-          <Button size="small" onClick={() => handleEdit(record)}>编辑</Button>
-          <Button size="small" danger onClick={() => handleDelete(record)}>删除</Button>
+          <PermissionWrapper permission="users.update">
+            <Button size="small" onClick={() => handleEdit(record)}>编辑</Button>
+          </PermissionWrapper>
+          <PermissionWrapper permission="users.destroy">
+            <Button size="small" danger onClick={() => handleDelete(record)}>删除</Button>
+          </PermissionWrapper>
         </Space>
       ),
     },
@@ -131,9 +137,9 @@ export default function UserListPage() {
 
       <Card
         extra={
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+          <PermissionButton type="primary" icon={<PlusOutlined />} permission="users.store" onClick={handleAdd}>
             新增用户
-          </Button>
+          </PermissionButton>
         }
       >
         <Table
