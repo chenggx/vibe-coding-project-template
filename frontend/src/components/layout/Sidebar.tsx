@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu } from 'antd';
 import {
@@ -58,13 +59,28 @@ export default function Sidebar({ collapsed }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const { userMenus } = useAppSelector((state) => state.auth);
+  const [openKeys, setOpenKeys] = useState<string[]>(
+    () => (collapsed ? [] : findOpenKeys(userMenus, location.pathname))
+  );
 
   const menuItems = buildMenuItems(userMenus);
+
+  useEffect(() => {
+    if (collapsed) {
+      setOpenKeys([]);
+    } else {
+      setOpenKeys(findOpenKeys(userMenus, location.pathname));
+    }
+  }, [collapsed, userMenus]);
 
   const handleMenuClick = ({ key }: { key: string }) => {
     if (key.startsWith('/')) {
       navigate(key);
     }
+  };
+
+  const handleOpenChange = (keys: string[]) => {
+    setOpenKeys(keys);
   };
 
   return (
@@ -75,14 +91,12 @@ export default function Sidebar({ collapsed }: SidebarProps) {
         {collapsed ? 'A' : 'Admin'}
       </div>
       <Menu
-        key={`${location.pathname}-${collapsed}`}
         mode="inline"
         selectedKeys={[location.pathname]}
-        defaultOpenKeys={
-          collapsed ? [] : findOpenKeys(userMenus, location.pathname)
-        }
+        openKeys={collapsed ? undefined : openKeys}
         items={menuItems}
         onClick={handleMenuClick}
+        onOpenChange={handleOpenChange}
         inlineCollapsed={collapsed}
       />
     </div>
