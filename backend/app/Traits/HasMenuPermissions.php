@@ -47,6 +47,15 @@ trait HasMenuPermissions
             ->unique()
             ->toArray();
 
-        return Menu::whereIn('id', $menuIds)->get();
+        $menus = Menu::whereIn('id', $menuIds)->get();
+
+        $parentIds = $menus->pluck('parent_id')->filter()->unique()->toArray();
+        while (! empty($parentIds)) {
+            $parentMenus = Menu::whereIn('id', $parentIds)->get();
+            $menus = $menus->merge($parentMenus);
+            $parentIds = $parentMenus->pluck('parent_id')->filter()->unique()->toArray();
+        }
+
+        return $menus->unique('id')->values();
     }
 }
