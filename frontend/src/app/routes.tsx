@@ -21,6 +21,9 @@ const RoleListPage = React.lazy(
 const MenuListPage = React.lazy(
   () => import('@/modules/menu/pages/MenuListPage'),
 );
+const ProfilePage = React.lazy(
+  () => import('@/modules/auth/pages/ProfilePage'),
+);
 
 class RouteErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -200,6 +203,14 @@ export default function AppRoutes() {
           element={
             <LazyLoader>
               <MenuListPage />
+            </LazyLoader>
+          }
+        />
+        <Route
+          path="profile"
+          element={
+            <LazyLoader>
+              <ProfilePage />
             </LazyLoader>
           }
         />

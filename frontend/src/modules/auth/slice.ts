@@ -7,7 +7,19 @@ import type {
   LoginDto,
   LoginResponse,
   CurrentUserResponse,
+  UpdateProfileDto,
 } from './types';
+import type { ApiError } from '@/services/api';
+
+function extractErrorMessage(err: unknown): string {
+  if (err && typeof err === 'object' && 'message' in err) {
+    return (err as ApiError).message;
+  }
+  if (err instanceof Error) {
+    return err.message;
+  }
+  return '请求失败';
+}
 
 const initialState: AuthState = {
   token: getToken(),
@@ -30,8 +42,7 @@ export const login = createAsyncThunk(
       await dispatch(fetchCurrentUser()).unwrap();
       return response;
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : '登录失败';
-      return rejectWithValue(message);
+      return rejectWithValue(err);
     }
   },
 );
@@ -45,9 +56,7 @@ export const fetchCurrentUser = createAsyncThunk(
       return response;
     } catch (err: unknown) {
       clearToken();
-      const message =
-        err instanceof Error ? err.message : '获取用户信息失败';
-      return rejectWithValue(message);
+      return rejectWithValue(err);
     }
   },
 );
@@ -62,6 +71,19 @@ export const logout = createAsyncThunk(
     } finally {
       clearToken();
       dispatch(resetAuth());
+    }
+  },
+);
+
+export const updateProfile = createAsyncThunk(
+  'auth/updateProfile',
+  async (data: UpdateProfileDto, { rejectWithValue }) => {
+    try {
+      const response =
+        (await authApi.updateProfile(data)) as unknown as CurrentUserResponse;
+      return response;
+    } catch (err: unknown) {
+      return rejectWithValue(err);
     }
   },
 );
@@ -97,7 +119,7 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = extractErrorMessage(action.payload);
       })
       // fetchCurrentUser
       .addCase(fetchCurrentUser.pending, (state) => {
@@ -131,7 +153,34 @@ const authSlice = createSlice({
         state.user = null;
         state.permissions = [];
         state.userMenus = [];
-        state.error = action.payload as string;
+        state.error = extractErrorMessage(action.payload);
+      })
+      // updateProfile
+      .addCase(updateProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        updateProfile.fulfilled,
+        (state, action: PayloadAction<CurrentUserResponse>) => {
+          state.loading = false;
+          state.user = {
+            id: action.payload.id,
+            name: action.payload.name,
+            email: action.payload.email,
+            avatar: action.payload.avatar,
+            status: action.payload.status,
+            expires_at: action.payload.expires_at,
+            remarks: action.payload.remarks,
+            created_at: action.payload.created_at,
+            updated_at: action.payload.updated_at,
+            roles: action.payload.roles,
+          };
+        },
+      )
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = extractErrorMessage(action.payload);
       });
   },
 });

@@ -1,4 +1,4 @@
-import { ConfigProvider, theme } from 'antd';
+import { ConfigProvider, App as AntApp, theme } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import { useEffect } from 'react';
 import AppRoutes from '@/app/routes';
@@ -45,7 +45,9 @@ function App() {
         },
       }}
     >
-      <AppRoutes />
+      <AntApp>
+        <AppRoutes />
+      </AntApp>
     </ConfigProvider>
   );
 }

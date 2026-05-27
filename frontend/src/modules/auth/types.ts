@@ -34,5 +34,12 @@ export interface AuthState {
   error: string | null;
 }
 
+export interface UpdateProfileDto {
+  name: string;
+  avatar?: string | null;
+  password?: string;
+  current_password?: string;
+}
+
 // 确保模块有运行时导出
 export const AUTH_TOKEN_KEY = 'token';

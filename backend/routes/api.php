@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
@@ -14,10 +15,10 @@ Route::post('/login', [AuthController::class, 'login'])->name('login')->middlewa
 Route::middleware(['auth:sanctum', 'active'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/user', [AuthController::class, 'me'])->name('user.me');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::post('/upload', [UploadController::class, 'store'])
-        ->name('upload.store')
-        ->middleware('menu.permission');
+        ->name('upload.store');
 
     Route::get('/users', [UserController::class, 'index'])
         ->name('users.index')

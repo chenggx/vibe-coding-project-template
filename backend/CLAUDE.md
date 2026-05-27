@@ -59,7 +59,7 @@ Controller 中不要直接 `return response()->json(...)`，统一使用 `ApiRes
 ### 目录约定
 
 - `app/Http/Controllers/` — 控制器，保持精简，业务逻辑下沉到 Service 或模型
-- `app/Http/Requests/{Auth,Menu,Role,Upload,User}/` — 按领域分目录的 FormRequest 验证类
+- `app/Http/Requests/{Auth,Menu,Profile,Role,Upload,User}/` — 按领域分目录的 FormRequest 验证类
 - `app/Models/` — Eloquent 模型，User 使用 `HasMenuPermissions` Trait 处理权限关联
 - `app/Services/` — 业务服务层（如 `PermissionService`、`StorageService`）
 - `app/Support/ApiResponse.php` — 全局响应封装，禁止绕过
@@ -80,6 +80,7 @@ Controller 中不要直接 `return response()->json(...)`，统一使用 `ApiRes
 | 10006 | 角色不存在 |
 | 10007 | 菜单不存在 |
 | 10008 | 请先删除子节点 |
+| 10009 | 当前密码不正确 |
 
 ### 数据模型
 

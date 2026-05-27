@@ -1,5 +1,5 @@
 import api from '@/services/api';
-import type { LoginDto, LoginResponse, CurrentUserResponse } from './types';
+import type { LoginDto, LoginResponse, CurrentUserResponse, UpdateProfileDto } from './types';
 
 export const authApi = {
   login: (data: LoginDto) =>
@@ -10,4 +10,7 @@ export const authApi = {
 
   getCurrentUser: () =>
     api.get<CurrentUserResponse>('/user'),
+
+  updateProfile: (data: UpdateProfileDto) =>
+    api.put<CurrentUserResponse>('/profile', data),
 };

@@ -12,8 +12,12 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
       placement="left"
       onClose={onClose}
       open={open}
-      size="default"
-      styles={{ body: { padding: 0 } }}
+      width="auto"
+      closeIcon={null}
+      styles={{
+        header: { display: 'none' },
+        body: { padding: 0, height: '100%' },
+      }}
     >
       <Sidebar collapsed={false} />
     </Drawer>

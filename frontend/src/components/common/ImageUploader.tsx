@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Upload, Button, Image, Space, message } from 'antd';
+import { Upload, Button, Image, Space, App } from 'antd';
 import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
 import { uploadApi } from '@/modules/upload/api';
 
@@ -16,6 +16,7 @@ export default function ImageUploader({
   maxSize = 2048,
   accept = 'image/jpeg,image/png,image/gif',
 }: ImageUploaderProps) {
+  const { message } = App.useApp();
   const [loading, setLoading] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
 
@@ -68,15 +69,15 @@ export default function ImageUploader({
   return (
     <div>
       {value ? (
-        <Space direction="vertical">
+        <Space orientation="vertical">
           <Image
             src={value}
             width={100}
             height={100}
             style={{ objectFit: 'cover', borderRadius: 2 }}
             preview={{
-              visible: previewVisible,
-              onVisibleChange: setPreviewVisible,
+              open: previewVisible,
+              onOpenChange: setPreviewVisible,
             }}
           />
           <Button
