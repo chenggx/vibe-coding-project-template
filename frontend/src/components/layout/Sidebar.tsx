@@ -1,26 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu } from 'antd';
-import {
-  SettingOutlined,
-  UserOutlined,
-  TeamOutlined,
-  MenuOutlined,
-  SafetyOutlined,
-  HomeOutlined,
-} from '@ant-design/icons';
 import { useAppSelector } from '@/hooks';
+import { iconMap } from '@/modules/menu/iconConfig';
 import type { MenuTree } from '@/types/menu';
 import styles from './Sidebar.module.css';
-
-const iconMap: Record<string, React.ReactNode> = {
-  Setting: <SettingOutlined />,
-  User: <UserOutlined />,
-  Team: <TeamOutlined />,
-  Menu: <MenuOutlined />,
-  Shield: <SafetyOutlined />,
-  Dashboard: <HomeOutlined />,
-};
 
 interface SidebarProps {
   collapsed: boolean;

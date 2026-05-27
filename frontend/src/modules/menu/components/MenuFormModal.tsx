@@ -4,6 +4,7 @@ import { useAppDispatch } from '@/hooks';
 import { createMenu, updateMenu } from '../slice';
 import type { MenuTree } from '@/types/menu';
 import type { CreateMenuDto } from '../types';
+import IconSelector from './IconSelector';
 
 interface MenuFormModalProps {
   open: boolean;
@@ -145,7 +146,7 @@ export default function MenuFormModal({
 
         {menuType !== 'permission' && (
           <Form.Item name="icon" label="图标">
-            <Input placeholder="图标名称，如 Setting、User" />
+            <IconSelector />
           </Form.Item>
         )}
 
