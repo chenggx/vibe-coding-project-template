@@ -45,7 +45,6 @@ function LazyLoader({ children }: { children: React.ReactNode }) {
 
 // Route permission mapping
 const routePermissionMap: Record<string, string> = {
-  '/dashboard': 'dashboard.index',
   '/users': 'users.index',
   '/roles': 'roles.index',
   '/menus': 'menus.index',

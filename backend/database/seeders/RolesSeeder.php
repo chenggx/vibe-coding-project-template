@@ -15,10 +15,12 @@ class RolesSeeder extends Seeder
         ]);
 
         DB::table('role_has_menus')->insert([
+            ['role_id' => 1, 'menu_id' => 17],
             ['role_id' => 1, 'menu_id' => 2],
             ['role_id' => 1, 'menu_id' => 3],
             ['role_id' => 1, 'menu_id' => 4],
             ['role_id' => 1, 'menu_id' => 14],
+            ['role_id' => 2, 'menu_id' => 17],
             ['role_id' => 2, 'menu_id' => 2],
             ['role_id' => 2, 'menu_id' => 6],
             ['role_id' => 2, 'menu_id' => 10],
