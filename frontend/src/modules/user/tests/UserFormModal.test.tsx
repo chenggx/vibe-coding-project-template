@@ -1,10 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
+import { screen } from '@testing-library/react';
+import { renderWithProviders } from '@/tests/utils';
 import UserFormModal from '../components/UserFormModal';
-import rootReducer from '@/app/rootReducer';
-import { adminApi } from '@/services/adminApi';
 
 vi.mock('@/hooks', () => ({
   useAppDispatch: () => vi.fn(),
@@ -18,18 +15,6 @@ vi.mock('@/hooks', () => ({
 vi.mock('@/components/common/ImageUploader', () => ({
   default: () => <div data-testid="image-uploader">ImageUploader</div>,
 }));
-
-const createTestStore = () =>
-  configureStore({
-    reducer: rootReducer,
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({ serializableCheck: false }).concat(adminApi.middleware),
-  });
-
-const renderWithProviders = (ui: React.ReactElement) => {
-  const store = createTestStore();
-  return render(<Provider store={store}>{ui}</Provider>);
-};
 
 describe('UserFormModal', () => {
   const defaultProps = {

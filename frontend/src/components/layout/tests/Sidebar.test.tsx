@@ -1,10 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
-import { configureStore } from '@reduxjs/toolkit';
-import authReducer from '@/modules/auth/slice';
+import { renderWithProviders } from '@/tests/utils';
 import Sidebar from '../Sidebar';
 
 const mockMenus = [
@@ -81,64 +78,51 @@ const mockMenus = [
   },
 ];
 
-function createTestStore(authState = {}) {
-  return configureStore({
-    reducer: { auth: authReducer },
-    preloadedState: {
-      auth: {
-        token: 'test-token',
-        user: null,
-        permissions: [],
-        userMenus: [],
-        isAuthenticated: false,
-        loading: false,
-        error: null,
-        ...authState,
-      },
-    },
-  });
-}
-
-function renderWithProviders(
-  ui: React.ReactElement,
-  store: ReturnType<typeof createTestStore>,
-) {
-  return render(
-    <Provider store={store}>
-      <BrowserRouter>{ui}</BrowserRouter>
-    </Provider>,
-  );
-}
-
 describe('Sidebar', () => {
   it('应该渲染 Logo', () => {
-    const store = createTestStore();
-    renderWithProviders(<Sidebar collapsed={false} />, store);
+    renderWithProviders(<Sidebar collapsed={false} />);
     expect(screen.getByText('Admin')).toBeInTheDocument();
   });
 
   it('折叠时应显示简短 Logo', () => {
-    const store = createTestStore();
-    renderWithProviders(<Sidebar collapsed={true} />, store);
+    renderWithProviders(<Sidebar collapsed={true} />);
     expect(screen.getByText('A')).toBeInTheDocument();
   });
 
   it('应该渲染菜单项（过滤 permission 类型）', () => {
-    const store = createTestStore({ userMenus: mockMenus });
-    renderWithProviders(<Sidebar collapsed={false} />, store);
+    renderWithProviders(<Sidebar collapsed={false} />, {
+      preloadedState: {
+        auth: {
+          token: 'test-token',
+          user: null,
+          permissions: [],
+          userMenus: mockMenus,
+          isAuthenticated: false,
+          loading: false,
+          error: null,
+        },
+      },
+    });
     expect(screen.getByText('仪表盘')).toBeInTheDocument();
     expect(screen.getByText('系统管理')).toBeInTheDocument();
-    // permission type menu should be filtered out
-    expect(
-      screen.queryByText('权限详情'),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText('权限详情')).not.toBeInTheDocument();
   });
 
   it('应该渲染子菜单', async () => {
     const user = userEvent.setup();
-    const store = createTestStore({ userMenus: mockMenus });
-    renderWithProviders(<Sidebar collapsed={false} />, store);
-    // 展开系统管理子菜单
+    renderWithProviders(<Sidebar collapsed={false} />, {
+      preloadedState: {
+        auth: {
+          token: 'test-token',
+          user: null,
+          permissions: [],
+          userMenus: mockMenus,
+          isAuthenticated: false,
+          loading: false,
+          error: null,
+        },
+      },
+    });
     await user.click(screen.getByText('系统管理'));
     expect(screen.getByText('用户管理')).toBeInTheDocument();
     expect(screen.getByText('角色管理')).toBeInTheDocument();

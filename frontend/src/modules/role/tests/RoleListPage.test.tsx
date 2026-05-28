@@ -1,16 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
-import { configureStore } from '@reduxjs/toolkit';
+import { screen } from '@testing-library/react';
+import { renderWithProviders } from '@/tests/utils';
 import RoleListPage from '../pages/RoleListPage';
-import authReducer from '@/modules/auth/slice';
-import { adminApi } from '@/services/adminApi';
 
 vi.mock('@/utils/token', () => ({
   getToken: vi.fn(() => 'test-token'),
   setToken: vi.fn(),
   clearToken: vi.fn(),
+}));
+
+vi.mock('@/hooks/usePermission', () => ({
+  usePermission: () => ({ hasPermission: () => true, permissions: [] }),
 }));
 
 vi.mock('@/hooks', () => ({
@@ -53,42 +53,6 @@ vi.mock('@/hooks', () => ({
     setEditingItem: vi.fn(),
   }),
 }));
-
-function createTestStore() {
-  return configureStore({
-    reducer: {
-      auth: authReducer,
-      [adminApi.reducerPath]: adminApi.reducer,
-    },
-    preloadedState: {
-      auth: {
-        token: null,
-        user: { id: 1, name: 'Admin', email: 'admin@test.com', avatar: null, status: true, expires_at: null, remarks: null, created_at: '', updated_at: '', roles: [] },
-        permissions: [],
-        userMenus: [],
-        isAuthenticated: true,
-        loading: false,
-        error: null,
-      },
-    },
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({ serializableCheck: false }).concat(adminApi.middleware),
-  });
-}
-
-function renderWithProviders(
-  ui: React.ReactElement,
-  store = createTestStore(),
-) {
-  return {
-    store,
-    ...render(
-      <Provider store={store}>
-        <BrowserRouter>{ui}</BrowserRouter>
-      </Provider>,
-    ),
-  };
-}
 
 describe('RoleListPage', () => {
   beforeEach(() => {

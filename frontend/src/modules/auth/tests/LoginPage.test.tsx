@@ -1,43 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
-import { configureStore } from '@reduxjs/toolkit';
+import { renderWithProviders } from '@/tests/utils';
 import LoginPage from '../pages/LoginPage';
-import authReducer from '../slice';
-import { adminApi } from '@/services/adminApi';
 
 vi.mock('@/utils/token', () => ({
   getToken: vi.fn(() => null),
   setToken: vi.fn(),
   clearToken: vi.fn(),
 }));
-
-function createTestStore() {
-  return configureStore({
-    reducer: {
-      auth: authReducer,
-      [adminApi.reducerPath]: adminApi.reducer,
-    },
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({ serializableCheck: false }).concat(adminApi.middleware),
-  });
-}
-
-function renderWithProviders(
-  ui: React.ReactElement,
-  store = createTestStore(),
-) {
-  return {
-    store,
-    ...render(
-      <Provider store={store}>
-        <BrowserRouter>{ui}</BrowserRouter>
-      </Provider>,
-    ),
-  };
-}
 
 describe('LoginPage', () => {
   beforeEach(() => {

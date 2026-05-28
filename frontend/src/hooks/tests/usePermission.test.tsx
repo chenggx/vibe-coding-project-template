@@ -1,25 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
+import { createTestStore } from '@/tests/utils';
 import { usePermission } from '../usePermission';
-import authReducer from '@/modules/auth/slice';
 
-function createTestStore(authState = {}) {
-  return configureStore({
-    reducer: { auth: authReducer },
-    preloadedState: { auth: authState },
-  });
-}
-
-function createWrapper(
-  store: ReturnType<typeof createTestStore>,
-) {
-  return function Wrapper({
-    children,
-  }: {
-    children: React.ReactNode;
-  }) {
+function createWrapper(store: ReturnType<typeof createTestStore>) {
+  return function Wrapper({ children }: { children: React.ReactNode }) {
     return <Provider store={store}>{children}</Provider>;
   };
 }
@@ -27,8 +13,7 @@ function createWrapper(
 describe('usePermission', () => {
   it('超级管理员应始终返回 true', () => {
     const store = createTestStore({
-      user: { id: 1 },
-      permissions: [],
+      auth: { user: { id: 1 }, permissions: [] },
     });
     const { result } = renderHook(() => usePermission(), {
       wrapper: createWrapper(store),
@@ -40,8 +25,7 @@ describe('usePermission', () => {
 
   it('普通用户应按权限数组判断', () => {
     const store = createTestStore({
-      user: { id: 2 },
-      permissions: ['users.index', 'users.create'],
+      auth: { user: { id: 2 }, permissions: ['users.index', 'users.create'] },
     });
     const { result } = renderHook(() => usePermission(), {
       wrapper: createWrapper(store),
@@ -56,8 +40,7 @@ describe('usePermission', () => {
 
   it('未登录用户应返回 false', () => {
     const store = createTestStore({
-      user: null,
-      permissions: [],
+      auth: { user: null, permissions: [] },
     });
     const { result } = renderHook(() => usePermission(), {
       wrapper: createWrapper(store),

@@ -1,11 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import { MemoryRouter } from 'react-router-dom';
+import { screen } from '@testing-library/react';
+import { renderWithProviders } from '@/tests/utils';
 import UserListPage from '../pages/UserListPage';
-import authReducer from '@/modules/auth/slice';
-import { adminApi } from '@/services/adminApi';
 
 vi.mock('@/hooks/usePermission', () => ({
   usePermission: () => ({ hasPermission: () => true, permissions: [] }),
@@ -50,25 +46,6 @@ vi.mock('@/hooks', () => ({
     setEditingItem: vi.fn(),
   }),
 }));
-
-const createTestStore = () =>
-  configureStore({
-    reducer: {
-      auth: authReducer,
-      [adminApi.reducerPath]: adminApi.reducer,
-    },
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({ serializableCheck: false }).concat(adminApi.middleware),
-  });
-
-const renderWithProviders = (ui: React.ReactElement) => {
-  const store = createTestStore();
-  return render(
-    <Provider store={store}>
-      <MemoryRouter>{ui}</MemoryRouter>
-    </Provider>
-  );
-};
 
 describe('UserListPage', () => {
   beforeEach(() => {

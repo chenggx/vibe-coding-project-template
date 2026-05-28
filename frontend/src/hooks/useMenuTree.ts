@@ -1,20 +1,9 @@
 import { useMemo } from 'react';
 import type { MenuTree } from '@/types/menu';
+import { flattenMenuTree } from '@/utils/menu';
 
 export function useMenuTree(menus: MenuTree[]) {
-  const flatMenus = useMemo(() => {
-    const result: MenuTree[] = [];
-    function traverse(nodes: MenuTree[]) {
-      for (const node of nodes) {
-        result.push(node);
-        if (node.children?.length) {
-          traverse(node.children);
-        }
-      }
-    }
-    traverse(menus);
-    return result;
-  }, [menus]);
+  const flatMenus = useMemo(() => flattenMenuTree(menus), [menus]);
 
   const menuMap = useMemo(() => {
     const map = new Map<number, MenuTree>();

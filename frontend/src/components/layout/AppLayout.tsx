@@ -1,17 +1,14 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import Grid from 'antd/es/grid';
+import { useResponsive } from '@/hooks';
 import PageTransition from '@/components/common/PageTransition';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import MobileDrawer from './MobileDrawer';
 import styles from './AppLayout.module.css';
 
-const { useBreakpoint } = Grid;
-
 export default function AppLayout() {
-  const screens = useBreakpoint();
-  const isMobile = !screens?.lg;
+  const { isMobile } = useResponsive();
   const [collapsed, setCollapsed] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 

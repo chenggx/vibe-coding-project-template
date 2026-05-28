@@ -71,7 +71,7 @@ export default function ProfilePage() {
               <Upload
                 showUploadList={false}
                 beforeUpload={(file) => {
-                  handleAvatarUpload(file as unknown as File);
+                  handleAvatarUpload(file as File);
                   return false;
                 }}
                 accept="image/jpeg,image/png,image/gif"
