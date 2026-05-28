@@ -150,6 +150,7 @@ export const adminApi = createApi({
     }),
     logout: build.mutation<void, void>({
       query: () => ({ url: '/logout', method: 'POST' }),
+      invalidatesTags: ['Auth'],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try { await queryFulfilled; } catch {
           // silently ignore
@@ -160,6 +161,7 @@ export const adminApi = createApi({
     }),
     getCurrentUser: build.query<CurrentUserResponse, void>({
       query: () => '/user',
+      providesTags: ['Auth'],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;

@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Card, Form, Input, Button, Typography, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useAppSelector } from '@/hooks';
@@ -15,28 +15,31 @@ interface LoginFormValues {
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const [login, { isLoading }] = useLoginMutation();
   const [messageApi, contextHolder] = message.useMessage();
 
+  const from = (location.state as { from?: { pathname?: string } } | undefined)?.from?.pathname || '/dashboard';
+
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard', { replace: true });
+      navigate(from, { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, from]);
 
   const onFinish = useCallback(
     async (values: LoginFormValues) => {
       try {
         await login(values).unwrap();
-        navigate('/dashboard', { replace: true });
+        navigate(from, { replace: true });
       } catch (err: unknown) {
         const msg =
           (err as { data?: { message?: string } })?.data?.message || '登录失败';
         messageApi.error(msg);
       }
     },
-    [login, navigate, messageApi],
+    [login, navigate, messageApi, from],
   );
 
   return (

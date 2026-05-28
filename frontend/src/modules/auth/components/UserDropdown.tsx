@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Dropdown, Avatar, Space } from 'antd';
 import { UserOutlined, LogoutOutlined, ProfileOutlined } from '@ant-design/icons';
 import { useAppSelector } from '@/hooks';
@@ -7,6 +7,7 @@ import { useLogoutMutation } from '@/services/adminApi';
 
 export default function UserDropdown() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAppSelector((state) => state.auth);
   const [logout] = useLogoutMutation();
 
@@ -16,8 +17,8 @@ export default function UserDropdown() {
     } catch {
       // ignore
     }
-    navigate('/login');
-  }, [logout, navigate]);
+    navigate('/login', { state: { from: location } });
+  }, [logout, navigate, location]);
 
   const menuItems = [
     {

@@ -103,7 +103,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     }
   }, [isAuthenticated, isFetchingUser, navigate, location]);
 
-  if (isFetchingUser && !user) {
+  if (!user) {
     return (
       <div
         style={{
