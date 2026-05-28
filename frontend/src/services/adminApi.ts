@@ -62,6 +62,8 @@ const customBaseQuery: BaseQueryFn<
 };
 
 import type { UploadResponse } from '@/modules/upload/types';
+import type { MenuTree } from '@/types/menu';
+import type { CreateMenuDto, UpdateMenuDto } from '@/modules/menu/types';
 
 export const adminApi = createApi({
   reducerPath: 'adminApi',
@@ -75,7 +77,29 @@ export const adminApi = createApi({
         return { url: '/upload', method: 'POST', body: formData };
       },
     }),
+    getAllMenus: build.query<MenuTree[], void>({
+      query: () => '/menus/all',
+      providesTags: ['Menu'],
+    }),
+    createMenu: build.mutation<MenuTree, CreateMenuDto>({
+      query: (body) => ({ url: '/menus', method: 'POST', body }),
+      invalidatesTags: ['Menu'],
+    }),
+    updateMenu: build.mutation<MenuTree, { id: number; data: UpdateMenuDto }>({
+      query: ({ id, data }) => ({ url: `/menus/${id}`, method: 'PUT', body: data }),
+      invalidatesTags: ['Menu'],
+    }),
+    deleteMenu: build.mutation<void, number>({
+      query: (id) => ({ url: `/menus/${id}`, method: 'DELETE' }),
+      invalidatesTags: ['Menu'],
+    }),
   }),
 });
 
-export const { useUploadFileMutation } = adminApi;
+export const {
+  useUploadFileMutation,
+  useGetAllMenusQuery,
+  useCreateMenuMutation,
+  useUpdateMenuMutation,
+  useDeleteMenuMutation,
+} = adminApi;

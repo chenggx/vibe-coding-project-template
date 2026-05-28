@@ -13,7 +13,7 @@ import FadeIn from '@/components/common/FadeIn';
 import CountUp from '@/components/common/CountUp';
 import { fetchUsers } from '@/modules/user/slice';
 import { fetchRoles } from '@/modules/role/slice';
-import { fetchAllMenus } from '@/modules/menu/slice';
+import { useGetAllMenusQuery } from '@/services/adminApi';
 import StatsCard from '../components/StatsCard';
 import WelcomeSection from '../components/WelcomeSection';
 import ActivityTimeline from '../components/ActivityTimeline';
@@ -29,7 +29,7 @@ export default function DashboardPage() {
   const { list: roles, meta: rolesMeta } = useAppSelector(
     (state) => state.role,
   );
-  const { allMenus } = useAppSelector((state) => state.menu);
+  const { data: allMenus = [] } = useGetAllMenusQuery();
 
   useEffect(() => {
     if (users.length === 0 && !usersMeta) {
@@ -38,10 +38,7 @@ export default function DashboardPage() {
     if (roles.length === 0 && !rolesMeta) {
       dispatch(fetchRoles({ page: 1, per_page: 1 }));
     }
-    if (allMenus.length === 0) {
-      dispatch(fetchAllMenus());
-    }
-  }, [dispatch, users.length, roles.length, allMenus.length, usersMeta, rolesMeta]);
+  }, [dispatch, users.length, roles.length, usersMeta, rolesMeta]);
 
   const userCount = usersMeta?.total ?? users.length;
   const roleCount = rolesMeta?.total ?? roles.length;

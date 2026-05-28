@@ -1,30 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Card, Button, Table, Space, App } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector, usePagination } from '@/hooks';
 import PermissionButton from '@/components/common/PermissionButton';
 import PermissionWrapper from '@/components/common/PermissionWrapper';
 import FadeIn from '@/components/common/FadeIn';
-import { fetchRoles, fetchRoleDetail, deleteRole } from '../slice';
-import { fetchAllMenus } from '@/modules/menu/slice';
+import { fetchRoleDetail, deleteRole } from '../slice';
+import { useGetAllMenusQuery } from '@/services/adminApi';
 import RoleFormModal from '../components/RoleFormModal';
 import type { Role } from '../types';
 
 export default function RoleListPage() {
   const dispatch = useAppDispatch();
   const { list, meta, loading } = useAppSelector((state) => state.role);
-  const { allMenus } = useAppSelector((state) => state.menu);
+  const { data: allMenus = [] } = useGetAllMenusQuery();
   const pagination = usePagination();
   const { message, modal } = App.useApp();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingRole, setEditingRole] = useState<Role | null>(null);
-
-  const { current: page, pageSize } = pagination;
-
-  useEffect(() => {
-    dispatch(fetchRoles({ page, per_page: pageSize }));
-    dispatch(fetchAllMenus());
-  }, [dispatch, page, pageSize]);
 
   const handleAdd = () => {
     setEditingRole(null);

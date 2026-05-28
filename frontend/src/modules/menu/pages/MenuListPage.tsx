@@ -1,33 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Card, App } from 'antd';
 import {
   PlusOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
-import { useAppDispatch, useAppSelector } from '@/hooks';
 import PermissionButton from '@/components/common/PermissionButton';
 import FadeIn from '@/components/common/FadeIn';
-import { fetchAllMenus, deleteMenu } from '../slice';
+import {
+  useGetAllMenusQuery,
+  useDeleteMenuMutation,
+} from '@/services/adminApi';
 import MenuTreeTable from '../components/MenuTreeTable';
 import MenuFormModal from '../components/MenuFormModal';
 import type { MenuTree } from '@/types/menu';
 
 export default function MenuListPage() {
-  const dispatch = useAppDispatch();
   const { message, modal } = App.useApp();
-  const { allMenus, loading, error } = useAppSelector((state) => state.menu);
+  const { data: allMenus = [], isLoading } = useGetAllMenusQuery();
+  const [deleteMenu] = useDeleteMenuMutation();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingMenu, setEditingMenu] = useState<MenuTree | null>(null);
-
-  useEffect(() => {
-    dispatch(fetchAllMenus());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (error) {
-      message.error(error);
-    }
-  }, [error]);
 
   const handleAdd = () => {
     setEditingMenu(null);
@@ -48,7 +40,7 @@ export default function MenuListPage() {
       cancelText: '取消',
       onOk: async () => {
         try {
-          await dispatch(deleteMenu(menu.id)).unwrap();
+          await deleteMenu(menu.id).unwrap();
           message.success('删除成功');
         } catch (err: unknown) {
           const errorMsg =
@@ -81,7 +73,7 @@ export default function MenuListPage() {
       >
         <MenuTreeTable
           data={allMenus}
-          loading={loading}
+          loading={isLoading}
           onEdit={handleEdit}
           onDelete={handleDelete}
           onAddChild={handleAdd}

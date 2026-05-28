@@ -5,8 +5,8 @@ import { BrowserRouter } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import RoleListPage from '../pages/RoleListPage';
 import roleReducer from '../slice';
-import menuReducer from '@/modules/menu/slice';
 import authReducer from '@/modules/auth/slice';
+import { adminApi } from '@/services/adminApi';
 
 vi.mock('@/utils/token', () => ({
   getToken: vi.fn(() => 'test-token'),
@@ -22,20 +22,12 @@ vi.mock('../slice', async (importOriginal) => {
   };
 });
 
-vi.mock('@/modules/menu/slice', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/modules/menu/slice')>();
-  return {
-    ...actual,
-    fetchAllMenus: vi.fn(() => ({ type: 'menu/fetchAllMenus' })),
-  };
-});
-
 function createTestStore() {
   return configureStore({
     reducer: {
       role: roleReducer,
-      menu: menuReducer,
       auth: authReducer,
+      [adminApi.reducerPath]: adminApi.reducer,
     },
     preloadedState: {
       auth: {
@@ -49,7 +41,7 @@ function createTestStore() {
       },
     },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({ serializableCheck: false }),
+      getDefaultMiddleware({ serializableCheck: false }).concat(adminApi.middleware),
   });
 }
 

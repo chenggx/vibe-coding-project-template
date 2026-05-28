@@ -7,7 +7,6 @@ import UserListPage from '../pages/UserListPage';
 import userReducer from '../slice';
 import roleReducer from '@/modules/role/slice';
 import authReducer from '@/modules/auth/slice';
-import menuReducer from '@/modules/menu/slice';
 import { adminApi } from '@/services/adminApi';
 
 vi.mock('@/hooks/usePermission', () => ({
@@ -52,7 +51,6 @@ const createTestStore = () =>
       user: userReducer,
       role: roleReducer,
       auth: authReducer,
-      menu: menuReducer,
       [adminApi.reducerPath]: adminApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>

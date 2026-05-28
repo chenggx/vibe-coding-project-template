@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
 import { Modal, Form, Input, InputNumber, Radio, TreeSelect, App } from 'antd';
-import { useAppDispatch } from '@/hooks';
-import { createMenu, updateMenu } from '../slice';
+import {
+  useCreateMenuMutation,
+  useUpdateMenuMutation,
+} from '@/services/adminApi';
 import type { MenuTree } from '@/types/menu';
 import type { CreateMenuDto } from '../types';
 import IconSelector from './IconSelector';
@@ -43,9 +45,10 @@ export default function MenuFormModal({
   onSuccess,
 }: MenuFormModalProps) {
   const [form] = Form.useForm();
-  const dispatch = useAppDispatch();
   const { message } = App.useApp();
   const menuType = Form.useWatch('type', form);
+  const [createMenu] = useCreateMenuMutation();
+  const [updateMenu] = useUpdateMenuMutation();
 
   useEffect(() => {
     if (open) {
@@ -79,10 +82,10 @@ export default function MenuFormModal({
       };
 
       if (menu) {
-        await dispatch(updateMenu({ id: menu.id, data: dto })).unwrap();
+        await updateMenu({ id: menu.id, data: dto }).unwrap();
         message.success('更新成功');
       } else {
-        await dispatch(createMenu(dto)).unwrap();
+        await createMenu(dto).unwrap();
         message.success('创建成功');
       }
       onSuccess();
