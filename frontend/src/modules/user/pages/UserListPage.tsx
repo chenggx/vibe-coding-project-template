@@ -14,7 +14,7 @@ import {
   SearchOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
-import { useAppSelector, usePagination, useCrudTable } from '@/hooks';
+import { useAppSelector, usePagination, useCrudTable, useResponsive } from '@/hooks';
 import PermissionButton from '@/components/common/PermissionButton';
 import PermissionWrapper from '@/components/common/PermissionWrapper';
 import FadeIn from '@/components/common/FadeIn';
@@ -32,6 +32,7 @@ interface SearchValues {
 }
 
 export default function UserListPage() {
+  const { isMobile } = useResponsive();
   const currentUser = useAppSelector((state) => state.auth.user);
   const pagination = usePagination();
   const [searchValues, setSearchValues] = useState<SearchValues>({});
@@ -143,14 +144,36 @@ export default function UserListPage() {
   return (
     <FadeIn stagger>
       <Card style={{ marginBottom: 16, background: 'var(--color-bg-card)' }}>
-        <Form key={formKey} layout="inline" style={{ marginBottom: 0 }} onFinish={handleSearch}>
-          <Form.Item name="name">
+        <Form
+          key={formKey}
+          layout={isMobile ? 'vertical' : 'inline'}
+          style={
+            isMobile
+              ? { marginBottom: 0 }
+              : { flexWrap: 'wrap', gap: '8px 16px' }
+          }
+          onFinish={handleSearch}
+        >
+          <Form.Item
+            name="name"
+            label={isMobile ? '姓名' : undefined}
+            style={{ marginBottom: isMobile ? 12 : 0 }}
+          >
             <Input placeholder="姓名" allowClear />
           </Form.Item>
-          <Form.Item name="email">
+          <Form.Item
+            name="email"
+            label={isMobile ? '邮箱' : undefined}
+            style={{ marginBottom: isMobile ? 12 : 0 }}
+          >
             <Input placeholder="邮箱" allowClear />
           </Form.Item>
-          <Form.Item>
+          <Form.Item
+            style={{
+              marginBottom: 0,
+              textAlign: isMobile ? 'right' : undefined,
+            }}
+          >
             <Space>
               <Button
                 type="primary"
@@ -187,6 +210,7 @@ export default function UserListPage() {
           rowKey="id"
           loading={isLoading}
           pagination={paginationConfig}
+          scroll={{ x: 'max-content' }}
         />
       </Card>
 
