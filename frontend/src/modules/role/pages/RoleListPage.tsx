@@ -123,6 +123,7 @@ export default function RoleListPage() {
           rowKey="id"
           loading={isLoading}
           pagination={paginationConfig}
+          scroll={{ x: 'max-content' }}
         />
       </Card>
       <RoleFormModal

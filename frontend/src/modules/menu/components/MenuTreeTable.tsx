@@ -115,6 +115,7 @@ export default function MenuTreeTable({
       pagination={false}
       childrenColumnName="children"
       defaultExpandAllRows
+      scroll={{ x: 'max-content' }}
     />
   );
 }
