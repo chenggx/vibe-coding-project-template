@@ -29,7 +29,7 @@ function treeToTreeData(menus: MenuTree[]) {
 }
 
 export default function MenuPermissionTree({ value = [], onChange, menuData }: MenuPermissionTreeProps) {
-  const treeData = useMemo(() => treeToTreeData(menuData), [menuData]);
+  const treeData = useMemo(() => treeToTreeData(menuData ?? []), [menuData]);
 
   const handleCheck = useCallback(
     (checked: React.Key[] | { checked: React.Key[]; halfChecked: React.Key[] }) => {

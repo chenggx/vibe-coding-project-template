@@ -11,12 +11,12 @@ import type { MenuTree } from '@/types/menu';
 interface RoleFormModalProps {
   open: boolean;
   role: Role | null;
-  allMenus: MenuTree[];
+  allMenus?: MenuTree[];
   onCancel: () => void;
   onSuccess: () => void;
 }
 
-export default function RoleFormModal({ open, role, allMenus, onCancel, onSuccess }: RoleFormModalProps) {
+export default function RoleFormModal({ open, role, allMenus = [], onCancel, onSuccess }: RoleFormModalProps) {
   const [form] = Form.useForm();
   const { message } = App.useApp();
   const [createRole] = useCreateRoleMutation();

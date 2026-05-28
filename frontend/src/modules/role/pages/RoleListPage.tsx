@@ -9,6 +9,7 @@ import {
   useGetRolesQuery,
   useDeleteRoleMutation,
   useGetRoleQuery,
+  useGetAllMenusQuery,
 } from '@/services/adminApi';
 import RoleFormModal from '../components/RoleFormModal';
 import type { Role } from '../types';
@@ -23,6 +24,7 @@ export default function RoleListPage() {
 
   const { data, isLoading } = useGetRolesQuery({ page, per_page: pageSize });
   const [deleteRole] = useDeleteRoleMutation();
+  const { data: allMenus = [] } = useGetAllMenusQuery();
 
   const list = data?.data ?? [];
   const meta = data?.meta ?? null;
@@ -126,6 +128,7 @@ export default function RoleListPage() {
       <RoleFormModal
         open={modalOpen}
         role={roleForModal}
+        allMenus={allMenus}
         onCancel={() => setModalOpen(false)}
         onSuccess={() => setModalOpen(false)}
       />
