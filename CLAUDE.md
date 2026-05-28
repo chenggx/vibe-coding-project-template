@@ -50,42 +50,16 @@ php artisan admin:reset-password
 
 ## 前端架构
 
-### 目录约定
-
-- `src/modules/{auth,dashboard,menu,role,user}/` — 按领域模块组织，每个模块包含 `api.ts`、`slice.ts`、`types.ts`、`pages/`、`components/`
-- `src/services/api.ts` — Axios 实例，统一封装响应格式（code/message/data），自动携带 Bearer Token，401/10002 时跳转登录
-- `src/store/index.ts` — Redux Toolkit Store，`rootReducer` 聚合各模块 slice
-- `src/hooks/` — 自定义 hooks：`usePermission`、`useAppDispatch`、`useAppSelector`、`useMenuTree`、`usePagination`、`useResponsive`
-- `src/components/layout/` — 布局组件：`AppLayout`、`Sidebar`、`Header`
-- `src/components/common/` — 通用组件：`PermissionButton`、`PermissionWrapper`、`ImageUploader`
-- `src/mocks/` — MSW mock 服务，用于测试
-- `src/types/` — 全局类型定义
-- `tests/setup.ts` — Vitest 初始化，包含 `matchMedia` 和 `ResizeObserver` mock（Ant Design 需要）
+前端使用 RTK Query 集中式 API（`src/services/adminApi.ts`）+ Redux Toolkit 纯 reducer slice。详细架构、目录约定、API 层、状态管理、测试配置等见 `frontend/CLAUDE.md`。
 
 ### 路由与权限
 
 - `src/app/routes.tsx` 定义路由表，页面使用 `React.lazy` 懒加载
 - `AuthGuard` 处理：
   1. 无 Token → 跳转 `/login`
-  2. 有 Token 但无用户信息 → `dispatch(fetchCurrentUser())`
+  2. 有 Token 但无用户信息 → 自动调用 `useGetCurrentUserQuery()` 获取
   3. 路由权限校验（`routePermissionMap`）→ 非超管且无权限时显示"无权访问"
-- 权限映射：`/users` → `users.index`，`/roles` → `roles.index`，`/menus` → `menus.index`
-
-### API 响应处理
-
-后端统一返回 `{ code, message, data }`，`src/services/api.ts` 的响应拦截器已做封装：
-- `code === 0` 时直接返回 `data`
-- 分页响应返回 `{ data, meta }`
-- `code !== 0` 时抛出 `ApiError`（含 `code` 字段）
-
-### 模块 Slice 规范
-
-每个 Redux 模块遵循相同结构（以 `modules/user/` 为例）：
-- `api.ts` — 模块 API 调用函数
-- `slice.ts` — `createSlice` + `createAsyncThunk`，导出 actions 和 reducer
-- `types.ts` — 模块相关的 TypeScript 类型
-- `pages/` — 页面级组件
-- `components/` — 模块内可复用组件
+- 权限映射：`/users` → `users.index`，`/roles` → `roles.index`，`/menus` → `menus.all`
 
 ## 前后端对接
 
