@@ -6,6 +6,7 @@ import {
 } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import PermissionButton from '@/components/common/PermissionButton';
+import FadeIn from '@/components/common/FadeIn';
 import { fetchAllMenus, deleteMenu } from '../slice';
 import MenuTreeTable from '../components/MenuTreeTable';
 import MenuFormModal from '../components/MenuFormModal';
@@ -50,7 +51,11 @@ export default function MenuListPage() {
           message.success('删除成功');
         } catch (err: unknown) {
           const errorMsg =
-            typeof err === 'string' ? err : err instanceof Error ? err.message : '删除失败';
+            typeof err === 'string'
+              ? err
+              : err instanceof Error
+                ? err.message
+                : '删除失败';
           message.error(errorMsg);
         }
       },
@@ -58,9 +63,10 @@ export default function MenuListPage() {
   };
 
   return (
-    <div>
+    <FadeIn stagger>
       <Card
         title="菜单管理"
+        style={{ background: 'var(--color-bg-card)' }}
         extra={
           <PermissionButton
             type="primary"
@@ -87,6 +93,6 @@ export default function MenuListPage() {
         onCancel={() => setModalOpen(false)}
         onSuccess={() => setModalOpen(false)}
       />
-    </div>
+    </FadeIn>
   );
 }

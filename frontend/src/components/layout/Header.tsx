@@ -51,12 +51,12 @@ export default function Header({
     <div
       style={{
         height: 64,
-        padding: '0 24px',
+        padding: '0 32px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        background: 'var(--color-bg-card)',
-        borderBottom: '1px solid var(--color-border)',
+        background: 'var(--color-bg-page)',
+        borderBottom: 'none',
       }}
     >
       <Space>

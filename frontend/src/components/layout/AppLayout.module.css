@@ -1,6 +1,7 @@
 .layout {
   display: flex;
   height: 100vh;
+  background: var(--color-bg-page);
 }
 
 .main {
@@ -12,9 +13,15 @@
 
 .content {
   flex: 1;
-  padding: 24px;
+  padding: 32px;
   background: var(--color-bg-page);
   overflow: auto;
+}
+
+.contentInner {
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 @media (max-width: 768px) {

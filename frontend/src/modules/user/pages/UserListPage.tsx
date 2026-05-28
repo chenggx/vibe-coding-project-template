@@ -1,9 +1,25 @@
 import { useEffect, useState } from 'react';
-import { Card, Button, Table, Space, Switch, Modal, Form, Input, message } from 'antd';
-import { PlusOutlined, SearchOutlined, ReloadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import {
+  Card,
+  Button,
+  Table,
+  Space,
+  Switch,
+  Modal,
+  Form,
+  Input,
+  message,
+} from 'antd';
+import {
+  PlusOutlined,
+  SearchOutlined,
+  ReloadOutlined,
+  ExclamationCircleOutlined,
+} from '@ant-design/icons';
 import { useAppDispatch, useAppSelector, usePagination } from '@/hooks';
 import PermissionButton from '@/components/common/PermissionButton';
 import PermissionWrapper from '@/components/common/PermissionWrapper';
+import FadeIn from '@/components/common/FadeIn';
 import { fetchUsers, deleteUser } from '../slice';
 import UserFormModal from '../components/UserFormModal';
 import RoleTag from '../components/RoleTag';
@@ -22,22 +38,24 @@ export default function UserListPage() {
 
   useEffect(() => {
     const values = searchForm.getFieldsValue();
-    dispatch(fetchUsers({
-      ...values,
-      page,
-      per_page: pageSize,
-    }));
+    dispatch(
+      fetchUsers({
+        ...values,
+        page,
+        per_page: pageSize,
+      }),
+    );
   }, [dispatch, searchForm, page, pageSize, searchTrigger]);
 
   const handleSearch = () => {
     pagination.reset();
-    setSearchTrigger(t => t + 1);
+    setSearchTrigger((t) => t + 1);
   };
 
   const handleReset = () => {
     searchForm.resetFields();
     pagination.reset();
-    setSearchTrigger(t => t + 1);
+    setSearchTrigger((t) => t + 1);
   };
 
   const handleAdd = () => {
@@ -62,7 +80,12 @@ export default function UserListPage() {
           await dispatch(deleteUser(user.id)).unwrap();
           message.success('删除成功');
         } catch (err: unknown) {
-          const errorMsg = typeof err === 'string' ? err : err instanceof Error ? err.message : '删除失败';
+          const errorMsg =
+            typeof err === 'string'
+              ? err
+              : err instanceof Error
+                ? err.message
+                : '删除失败';
           message.error(errorMsg);
         }
       },
@@ -92,7 +115,7 @@ export default function UserListPage() {
       dataIndex: 'created_at',
       key: 'created_at',
       width: 120,
-      render: (v: string) => v ? new Date(v).toLocaleDateString() : '-',
+      render: (v: string) => (v ? new Date(v).toLocaleDateString() : '-'),
     },
     {
       title: '操作',
@@ -101,10 +124,14 @@ export default function UserListPage() {
       render: (_: unknown, record: User) => (
         <Space>
           <PermissionWrapper permission="users.update">
-            <Button size="small" onClick={() => handleEdit(record)}>编辑</Button>
+            <Button size="small" onClick={() => handleEdit(record)}>
+              编辑
+            </Button>
           </PermissionWrapper>
           <PermissionWrapper permission="users.destroy">
-            <Button size="small" danger onClick={() => handleDelete(record)}>删除</Button>
+            <Button size="small" danger onClick={() => handleDelete(record)}>
+              删除
+            </Button>
           </PermissionWrapper>
         </Space>
       ),
@@ -112,9 +139,13 @@ export default function UserListPage() {
   ];
 
   return (
-    <div>
-      <Card title="用户管理" style={{ marginBottom: 16 }}>
-        <Form form={searchForm} layout="inline" style={{ marginBottom: 16 }}>
+    <FadeIn stagger>
+      <Card style={{ marginBottom: 16, background: 'var(--color-bg-card)' }}>
+        <Form
+          form={searchForm}
+          layout="inline"
+          style={{ marginBottom: 0 }}
+        >
           <Form.Item name="name">
             <Input placeholder="姓名" allowClear />
           </Form.Item>
@@ -123,16 +154,31 @@ export default function UserListPage() {
           </Form.Item>
           <Form.Item>
             <Space>
-              <Button type="primary" icon={<SearchOutlined />} onClick={handleSearch}>搜索</Button>
-              <Button icon={<ReloadOutlined />} onClick={handleReset}>重置</Button>
+              <Button
+                type="primary"
+                icon={<SearchOutlined />}
+                onClick={handleSearch}
+              >
+                搜索
+              </Button>
+              <Button icon={<ReloadOutlined />} onClick={handleReset}>
+                重置
+              </Button>
             </Space>
           </Form.Item>
         </Form>
       </Card>
 
       <Card
+        title="用户管理"
+        style={{ background: 'var(--color-bg-card)' }}
         extra={
-          <PermissionButton type="primary" icon={<PlusOutlined />} permission="users.store" onClick={handleAdd}>
+          <PermissionButton
+            type="primary"
+            icon={<PlusOutlined />}
+            permission="users.store"
+            onClick={handleAdd}
+          >
             新增用户
           </PermissionButton>
         }
@@ -142,7 +188,14 @@ export default function UserListPage() {
           dataSource={list}
           rowKey="id"
           loading={loading}
-          pagination={meta ? pagination.getPaginationConfig(meta) : false}
+          pagination={
+            meta
+              ? {
+                  ...pagination.getPaginationConfig(meta),
+                  position: ['bottomCenter'],
+                }
+              : false
+          }
         />
       </Card>
 
@@ -152,6 +205,6 @@ export default function UserListPage() {
         onCancel={() => setModalOpen(false)}
         onSuccess={() => setModalOpen(false)}
       />
-    </div>
+    </FadeIn>
   );
 }

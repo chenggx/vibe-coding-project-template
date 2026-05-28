@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Grid from 'antd/es/grid';
+import PageTransition from '@/components/common/PageTransition';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import MobileDrawer from './MobileDrawer';
@@ -29,7 +30,11 @@ export default function AppLayout() {
           onOpenDrawer={() => setDrawerOpen(true)}
         />
         <div className={styles.content}>
-          <Outlet />
+          <div className={styles.contentInner}>
+            <PageTransition>
+              <Outlet />
+            </PageTransition>
+          </div>
         </div>
       </div>
     </div>

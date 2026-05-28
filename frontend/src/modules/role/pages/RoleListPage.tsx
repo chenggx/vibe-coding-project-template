@@ -4,6 +4,7 @@ import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector, usePagination } from '@/hooks';
 import PermissionButton from '@/components/common/PermissionButton';
 import PermissionWrapper from '@/components/common/PermissionWrapper';
+import FadeIn from '@/components/common/FadeIn';
 import { fetchRoles, fetchRoleDetail, deleteRole } from '../slice';
 import { fetchAllMenus } from '@/modules/menu/slice';
 import RoleFormModal from '../components/RoleFormModal';
@@ -35,7 +36,12 @@ export default function RoleListPage() {
       setEditingRole(detail);
       setModalOpen(true);
     } catch (err: unknown) {
-      const errorMsg = typeof err === 'string' ? err : err instanceof Error ? err.message : '获取角色详情失败';
+      const errorMsg =
+        typeof err === 'string'
+          ? err
+          : err instanceof Error
+            ? err.message
+            : '获取角色详情失败';
       message.error(errorMsg);
     }
   };
@@ -52,7 +58,12 @@ export default function RoleListPage() {
           await dispatch(deleteRole(role.id)).unwrap();
           message.success('删除成功');
         } catch (err: unknown) {
-          const errorMsg = typeof err === 'string' ? err : err instanceof Error ? err.message : '删除失败';
+          const errorMsg =
+            typeof err === 'string'
+              ? err
+              : err instanceof Error
+                ? err.message
+                : '删除失败';
           message.error(errorMsg);
         }
       },
@@ -63,8 +74,18 @@ export default function RoleListPage() {
     { title: 'ID', dataIndex: 'id', key: 'id', width: 80 },
     { title: '标识名', dataIndex: 'name', key: 'name' },
     { title: '显示名称', dataIndex: 'display_name', key: 'display_name' },
-    { title: '描述', dataIndex: 'description', key: 'description', render: (v: string | null) => v || '-' },
-    { title: '关联用户数', dataIndex: 'users_count', key: 'users_count', width: 100 },
+    {
+      title: '描述',
+      dataIndex: 'description',
+      key: 'description',
+      render: (v: string | null) => v || '-',
+    },
+    {
+      title: '关联用户数',
+      dataIndex: 'users_count',
+      key: 'users_count',
+      width: 100,
+    },
     {
       title: '操作',
       key: 'actions',
@@ -72,10 +93,14 @@ export default function RoleListPage() {
       render: (_: unknown, record: Role) => (
         <Space>
           <PermissionWrapper permission="roles.update">
-            <Button size="small" onClick={() => handleEdit(record)}>编辑</Button>
+            <Button size="small" onClick={() => handleEdit(record)}>
+              编辑
+            </Button>
           </PermissionWrapper>
           <PermissionWrapper permission="roles.destroy">
-            <Button size="small" danger onClick={() => handleDelete(record)}>删除</Button>
+            <Button size="small" danger onClick={() => handleDelete(record)}>
+              删除
+            </Button>
           </PermissionWrapper>
         </Space>
       ),
@@ -83,11 +108,17 @@ export default function RoleListPage() {
   ];
 
   return (
-    <div>
+    <FadeIn stagger>
       <Card
         title="角色管理"
+        style={{ background: 'var(--color-bg-card)' }}
         extra={
-          <PermissionButton type="primary" icon={<PlusOutlined />} permission="roles.store" onClick={handleAdd}>
+          <PermissionButton
+            type="primary"
+            icon={<PlusOutlined />}
+            permission="roles.store"
+            onClick={handleAdd}
+          >
             新增角色
           </PermissionButton>
         }
@@ -97,7 +128,14 @@ export default function RoleListPage() {
           dataSource={list}
           rowKey="id"
           loading={loading}
-          pagination={meta ? pagination.getPaginationConfig(meta) : false}
+          pagination={
+            meta
+              ? {
+                  ...pagination.getPaginationConfig(meta),
+                  position: ['bottomCenter'],
+                }
+              : false
+          }
         />
       </Card>
       <RoleFormModal
@@ -107,6 +145,6 @@ export default function RoleListPage() {
         onCancel={() => setModalOpen(false)}
         onSuccess={() => setModalOpen(false)}
       />
-    </div>
+    </FadeIn>
   );
 }

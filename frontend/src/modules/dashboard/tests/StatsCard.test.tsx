@@ -10,7 +10,7 @@ describe('StatsCard', () => {
         title="用户总数"
         value={42}
         icon={<UserOutlined />}
-        color="#c45c3e"
+        color="#0d9488"
       />,
     );
     expect(screen.getByText('用户总数')).toBeInTheDocument();
@@ -23,7 +23,7 @@ describe('StatsCard', () => {
         title="增长率"
         value="12"
         icon={<UserOutlined />}
-        color="#c45c3e"
+        color="#0d9488"
         suffix="%"
       />,
     );

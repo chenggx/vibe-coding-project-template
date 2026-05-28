@@ -6,7 +6,7 @@ const { Text } = Typography;
 
 interface StatsCardProps {
   title: string;
-  value: string | number;
+  value: ReactNode;
   icon: ReactNode;
   color: string;
   suffix?: string;

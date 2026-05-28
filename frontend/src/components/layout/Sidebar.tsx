@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu } from 'antd';
 import { useAppSelector } from '@/hooks';
@@ -54,14 +54,6 @@ export default function Sidebar({ collapsed }: SidebarProps) {
 
   const menuItems = buildMenuItems(userMenus);
 
-  useEffect(() => {
-    if (collapsed) {
-      setOpenKeys([]);
-    } else {
-      setOpenKeys(findOpenKeys(userMenus, location.pathname));
-    }
-  }, [collapsed, userMenus]);
-
   const handleMenuClick = ({ key }: { key: string }) => {
     if (key.startsWith('/')) {
       navigate(key);
@@ -82,11 +74,12 @@ export default function Sidebar({ collapsed }: SidebarProps) {
       <Menu
         mode="inline"
         selectedKeys={[location.pathname]}
-        openKeys={collapsed ? undefined : openKeys}
+        openKeys={collapsed ? [] : openKeys}
         items={menuItems}
         onClick={handleMenuClick}
         onOpenChange={handleOpenChange}
         inlineCollapsed={collapsed}
+        collapsedWidth={64}
       />
     </div>
   );

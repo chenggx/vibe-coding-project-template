@@ -40,7 +40,7 @@ export default function MenuPermissionTree({ value = [], onChange, menuData }: M
   );
 
   return (
-    <div style={{ border: '1px solid #d9d9d9', borderRadius: 2, padding: 8, maxHeight: 300, overflow: 'auto' }}>
+    <div style={{ border: '1px solid var(--color-border)', borderRadius: 6, padding: 8, maxHeight: 300, overflow: 'auto' }}>
       {treeData.length > 0 ? (
         <Tree
           checkable
@@ -51,7 +51,7 @@ export default function MenuPermissionTree({ value = [], onChange, menuData }: M
           defaultExpandAll
         />
       ) : (
-        <div style={{ color: '#999', textAlign: 'center', padding: 16 }}>暂无菜单数据</div>
+        <div style={{ color: 'var(--color-text-secondary)', textAlign: 'center', padding: 16 }}>暂无菜单数据</div>
       )}
     </div>
   );

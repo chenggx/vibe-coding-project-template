@@ -12,9 +12,12 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
       placement="left"
       onClose={onClose}
       open={open}
+      width={220}
       styles={{
-        body: { padding: 0, height: '100%' },
-        section: { width: 240 },
+        body: { padding: 0, height: '100%', background: 'var(--color-bg-card)' },
+        header: { background: 'var(--color-bg-card)' },
+        footer: { background: 'var(--color-bg-card)' },
+        mask: { borderRadius: 8 },
       }}
     >
       <Sidebar collapsed={false} />

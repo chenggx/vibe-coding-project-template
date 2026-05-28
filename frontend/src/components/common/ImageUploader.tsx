@@ -74,7 +74,7 @@ export default function ImageUploader({
             src={value}
             width={100}
             height={100}
-            style={{ objectFit: 'cover', borderRadius: 2 }}
+            style={{ objectFit: 'cover', borderRadius: 8 }}
             preview={{
               open: previewVisible,
               onOpenChange: setPreviewVisible,

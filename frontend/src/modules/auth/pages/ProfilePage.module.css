@@ -1,25 +1,28 @@
-.avatarSection {
-  text-align: center;
-  margin-bottom: 4px;
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 24px;
 }
 
 .avatarWrap {
   position: relative;
   display: inline-block;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .avatar {
-  width: 88px;
-  height: 88px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   object-fit: cover;
-  background: #f0ebe6;
+  background: var(--color-bg-page);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   transition: opacity 0.15s ease;
+  border: 2px solid var(--color-border);
 }
 
 .avatarWrap:hover .avatar {
@@ -28,7 +31,7 @@
 
 .avatarPlaceholder {
   font-size: 32px;
-  color: #c45c3e;
+  color: var(--color-accent);
   opacity: 0.4;
 }
 
@@ -55,18 +58,40 @@
   opacity: 1;
 }
 
-.hint {
-  font-size: 12px;
-  color: rgba(0, 0, 0, 0.35);
-  margin-top: 8px;
-  opacity: 0;
-  transition: opacity 0.15s ease;
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.avatarSection:hover .hint {
-  opacity: 1;
+.profileMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
 }
 
-.divider {
-  margin: 20px 0 24px;
+.metaItem {
+  display: inline-flex;
+  align-items: center;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 16px;
+  font-family: 'Outfit', sans-serif;
+}
+
+@media (max-width: 768px) {
+  .profileHeader {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profileMeta {
+    justify-content: center;
+  }
 }
