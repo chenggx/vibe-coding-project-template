@@ -18,5 +18,9 @@ export interface PaginationMeta {
   total: number;
 }
 
+export interface ApiError extends Error {
+  code: number;
+}
+
 // 确保模块有运行时导出
 export const API_SUCCESS_CODE = 0;

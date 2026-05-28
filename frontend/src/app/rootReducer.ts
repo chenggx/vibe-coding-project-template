@@ -5,6 +5,7 @@ import uploadReducer from '@/modules/upload/slice';
 import roleReducer from '@/modules/role/slice';
 import userReducer from '@/modules/user/slice';
 import themeReducer from '@/modules/theme/slice';
+import { adminApi } from '@/services/adminApi';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   role: roleReducer,
   user: userReducer,
   theme: themeReducer,
+  [adminApi.reducerPath]: adminApi.reducer,
 });
 
 export default rootReducer;

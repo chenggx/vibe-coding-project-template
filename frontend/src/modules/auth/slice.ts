@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import { authApi } from './api';
-import { setToken, clearToken, getToken } from '@/utils/token';
+import { setToken as setTokenStorage, clearToken, getToken } from '@/utils/token';
 import { extractPermissions } from '@/utils/menu';
 import type {
   AuthState,
@@ -41,7 +41,7 @@ export const login = createAsyncThunk(
       const response = (await authApi.login(
         credentials,
       )) as unknown as LoginResponse;
-      setToken(response.token);
+      setTokenStorage(response.token);
       await dispatch(fetchCurrentUser()).unwrap();
       return response;
     } catch (err: unknown) {
@@ -106,6 +106,17 @@ const authSlice = createSlice({
     },
     clearError: (state) => {
       state.error = null;
+    },
+    setToken: (state, action: PayloadAction<string>) => {
+      state.token = action.payload;
+      state.isAuthenticated = true;
+    },
+    setUserAndPermissions: (state, action: PayloadAction<CurrentUserResponse>) => {
+      const { menus, ...user } = action.payload;
+      state.user = user as typeof state.user;
+      state.userMenus = menus;
+      state.permissions = extractPermissions(menus);
+      state.loading = false;
     },
   },
   extraReducers: (builder) => {
@@ -185,5 +196,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { resetAuth, clearError } = authSlice.actions;
+export const { resetAuth, clearError, setToken, setUserAndPermissions } = authSlice.actions;
 export default authSlice.reducer;
