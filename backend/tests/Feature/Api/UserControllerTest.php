@@ -149,9 +149,11 @@ class UserControllerTest extends TestCase
 
     public function test_destroy_admin_returns_10005(): void
     {
-        Sanctum::actingAs($this->admin, ['*']);
+        $user = User::factory()->create();
+        $user->roles()->sync([2]);
+        Sanctum::actingAs($user, ['*']);
 
-        $response = $this->deleteJson('/api/users/1');
+        $response = $this->deleteJson('/api/users/'.$this->admin->id);
 
         $response->assertStatus(200)
             ->assertJsonPath('code', 10005);
@@ -165,5 +167,15 @@ class UserControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('code', 10004);
+    }
+
+    public function test_destroy_self_returns_10010(): void
+    {
+        Sanctum::actingAs($this->admin, ['*']);
+
+        $response = $this->deleteJson('/api/users/'.$this->admin->id);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('code', 10010);
     }
 }

@@ -107,6 +107,10 @@ class UserController extends Controller
             return ApiResponse::error(10004, '用户不存在');
         }
 
+        if ($user->id === auth()->id()) {
+            return ApiResponse::error(10010, '不能删除自己的账号');
+        }
+
         if ($user->isSuperAdmin()) {
             return ApiResponse::error(10005, '不能删除超级管理员');
         }

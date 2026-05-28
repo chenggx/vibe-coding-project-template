@@ -28,6 +28,7 @@ import type { User } from '../types';
 export default function UserListPage() {
   const dispatch = useAppDispatch();
   const { list, meta, loading } = useAppSelector((state) => state.user);
+  const currentUser = useAppSelector((state) => state.auth.user);
   const pagination = usePagination();
   const [searchForm] = Form.useForm();
   const [modalOpen, setModalOpen] = useState(false);
@@ -128,11 +129,13 @@ export default function UserListPage() {
               编辑
             </Button>
           </PermissionWrapper>
-          <PermissionWrapper permission="users.destroy">
-            <Button size="small" danger onClick={() => handleDelete(record)}>
-              删除
-            </Button>
-          </PermissionWrapper>
+          {currentUser && currentUser.id !== record.id && (
+            <PermissionWrapper permission="users.destroy">
+              <Button size="small" danger onClick={() => handleDelete(record)}>
+                删除
+              </Button>
+            </PermissionWrapper>
+          )}
         </Space>
       ),
     },
