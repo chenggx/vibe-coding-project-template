@@ -61,9 +61,21 @@ const customBaseQuery: BaseQueryFn<
   return { data };
 };
 
+import type { UploadResponse } from '@/modules/upload/types';
+
 export const adminApi = createApi({
   reducerPath: 'adminApi',
   baseQuery: customBaseQuery,
   tagTypes: ['User', 'Role', 'Menu', 'Auth', 'Upload'],
-  endpoints: () => ({}),
+  endpoints: (build) => ({
+    uploadFile: build.mutation<UploadResponse, File>({
+      query: (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        return { url: '/upload', method: 'POST', body: formData };
+      },
+    }),
+  }),
 });
+
+export const { useUploadFileMutation } = adminApi;

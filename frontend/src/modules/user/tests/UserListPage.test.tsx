@@ -8,7 +8,7 @@ import userReducer from '../slice';
 import roleReducer from '@/modules/role/slice';
 import authReducer from '@/modules/auth/slice';
 import menuReducer from '@/modules/menu/slice';
-import uploadReducer from '@/modules/upload/slice';
+import { adminApi } from '@/services/adminApi';
 
 vi.mock('@/hooks/usePermission', () => ({
   usePermission: () => ({ hasPermission: () => true, permissions: [] }),
@@ -53,8 +53,10 @@ const createTestStore = () =>
       role: roleReducer,
       auth: authReducer,
       menu: menuReducer,
-      upload: uploadReducer,
+      [adminApi.reducerPath]: adminApi.reducer,
     },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({ serializableCheck: false }).concat(adminApi.middleware),
   });
 
 const renderWithProviders = (ui: React.ReactElement) => {

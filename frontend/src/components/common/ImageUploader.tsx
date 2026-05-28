@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Upload, Button, Image, Space, App } from 'antd';
 import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
-import { uploadApi } from '@/modules/upload/api';
+import { useUploadFileMutation } from '@/services/adminApi';
 
 interface ImageUploaderProps {
   value?: string;
@@ -17,8 +17,8 @@ export default function ImageUploader({
   accept = 'image/jpeg,image/png,image/gif',
 }: ImageUploaderProps) {
   const { message } = App.useApp();
-  const [loading, setLoading] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
+  const [uploadFile, { isLoading: loading }] = useUploadFileMutation();
 
   const beforeUpload = (file: File) => {
     const isValidType = ['image/jpeg', 'image/png', 'image/gif'].includes(
@@ -45,11 +45,8 @@ export default function ImageUploader({
     onSuccess?: (body: unknown) => void;
     onError?: (error: Error) => void;
   }) => {
-    setLoading(true);
     try {
-      const result = (await uploadApi.uploadFile(file as File)) as unknown as {
-        url: string;
-      };
+      const result = await uploadFile(file as File).unwrap();
       onChange(result.url);
       message.success('上传成功');
       onSuccess?.(result);
@@ -57,8 +54,6 @@ export default function ImageUploader({
       const messageText = err instanceof Error ? err.message : '上传失败';
       message.error(messageText);
       onError?.(new Error(messageText));
-    } finally {
-      setLoading(false);
     }
   };
 

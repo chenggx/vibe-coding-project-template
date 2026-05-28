@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks';
 import FadeIn from '@/components/common/FadeIn';
 import { updateProfile } from '../slice';
 import { handleApiError } from '@/services/errorHandler';
-import { uploadApi } from '@/modules/upload/api';
+import { useUploadFileMutation } from '@/services/adminApi';
 import styles from './ProfilePage.module.css';
 
 const { Title } = Typography;
@@ -14,6 +14,7 @@ export default function ProfilePage() {
   const { message } = App.useApp();
   const dispatch = useAppDispatch();
   const { user, loading } = useAppSelector((state) => state.auth);
+  const [uploadFile] = useUploadFileMutation();
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -24,7 +25,7 @@ export default function ProfilePage() {
 
   const handleAvatarUpload = async (file: File) => {
     try {
-      const result = (await uploadApi.uploadFile(file)) as unknown as { url: string };
+      const result = await uploadFile(file).unwrap();
       const currentName = form.getFieldValue('name') || user?.name || '';
       form.setFieldsValue({ avatar: result.url });
       await dispatch(updateProfile({ name: currentName, avatar: result.url })).unwrap();
