@@ -97,3 +97,8 @@ php artisan admin:reset-password
 ## 业务规则
 
 - **用户只能拥有一个角色。** 虽然数据库层面 `user_has_roles` 是多对多关联表，但产品层面限制每个用户只能分配一个角色。创建/编辑用户时前端表单使用单选 Select，提交时 `role_ids` 最多只包含一个元素。
+
+## 前端注意事项
+
+- Ant Design 6 中，`Drawer` 的 `width` 已废弃，使用 `size` 替代。
+- Ant Design 6 中，`Table` 分页的 `position` 已废弃，使用 `placement` 替代。

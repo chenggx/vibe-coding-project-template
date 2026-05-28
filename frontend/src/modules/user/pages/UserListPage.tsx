@@ -195,7 +195,7 @@ export default function UserListPage() {
             meta
               ? {
                   ...pagination.getPaginationConfig(meta),
-                  position: ['bottomCenter'],
+                  placement: ['bottomCenter'],
                 }
               : false
           }

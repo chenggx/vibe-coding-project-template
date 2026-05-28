@@ -132,7 +132,7 @@ export default function RoleListPage() {
             meta
               ? {
                   ...pagination.getPaginationConfig(meta),
-                  position: ['bottomCenter'],
+                  placement: ['bottomCenter'],
                 }
               : false
           }
