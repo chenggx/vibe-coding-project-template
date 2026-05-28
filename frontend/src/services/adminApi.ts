@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
-import { resetAuth } from '@/modules/auth/slice';
+import { resetAuth, setToken, setUserAndPermissions } from '@/modules/auth/slice';
+import { setToken as setTokenStorage, clearToken } from '@/utils/token';
 import type { RootState } from '@/store';
 import type { ApiResponse, PaginatedResponse } from '@/types/api';
 
@@ -67,6 +68,7 @@ import type { CreateMenuDto, UpdateMenuDto } from '@/modules/menu/types';
 import type { User, CreateUserDto, UpdateUserDto, FetchUsersParams } from '@/modules/user/types';
 import type { Role, CreateRoleDto, UpdateRoleDto, FetchRolesParams } from '@/modules/role/types';
 import type { PaginationMeta } from '@/types/api';
+import type { LoginDto, LoginResponse, CurrentUserResponse, UpdateProfileDto } from '@/modules/auth/types';
 
 export const adminApi = createApi({
   reducerPath: 'adminApi',
@@ -134,6 +136,51 @@ export const adminApi = createApi({
       query: (id) => ({ url: `/roles/${id}`, method: 'DELETE' }),
       invalidatesTags: ['Role'],
     }),
+    login: build.mutation<LoginResponse, LoginDto>({
+      query: (body) => ({ url: '/login', method: 'POST', body }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          setTokenStorage(data.token);
+          dispatch(setToken(data.token));
+        } catch {
+          // silently ignore
+        }
+      },
+    }),
+    logout: build.mutation<void, void>({
+      query: () => ({ url: '/logout', method: 'POST' }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try { await queryFulfilled; } catch {
+          // silently ignore
+        }
+        clearToken();
+        dispatch(resetAuth());
+      },
+    }),
+    getCurrentUser: build.query<CurrentUserResponse, void>({
+      query: () => '/user',
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setUserAndPermissions(data));
+        } catch {
+          clearToken();
+          dispatch(resetAuth());
+        }
+      },
+    }),
+    updateProfile: build.mutation<CurrentUserResponse, UpdateProfileDto>({
+      query: (body) => ({ url: '/profile', method: 'PUT', body }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setUserAndPermissions(data));
+        } catch {
+          // silently ignore
+        }
+      },
+    }),
   }),
 });
 
@@ -152,4 +199,8 @@ export const {
   useCreateRoleMutation,
   useUpdateRoleMutation,
   useDeleteRoleMutation,
+  useLoginMutation,
+  useLogoutMutation,
+  useGetCurrentUserQuery,
+  useUpdateProfileMutation,
 } = adminApi;

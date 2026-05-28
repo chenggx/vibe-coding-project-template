@@ -2,9 +2,9 @@ import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Form, Input, Button, Typography, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppSelector } from '@/hooks';
 import FadeIn from '@/components/common/FadeIn';
-import { login, clearError } from '../slice';
+import { useLoginMutation } from '@/services/adminApi';
 
 const { Title, Text } = Typography;
 
@@ -14,9 +14,9 @@ interface LoginFormValues {
 }
 
 export default function LoginPage() {
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { loading, error, isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const [login, { isLoading }] = useLoginMutation();
   const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
@@ -25,18 +25,18 @@ export default function LoginPage() {
     }
   }, [isAuthenticated, navigate]);
 
-  useEffect(() => {
-    if (error) {
-      messageApi.error(error);
-      dispatch(clearError());
-    }
-  }, [error, dispatch, messageApi]);
-
   const onFinish = useCallback(
-    (values: LoginFormValues) => {
-      dispatch(login(values));
+    async (values: LoginFormValues) => {
+      try {
+        await login(values).unwrap();
+        navigate('/dashboard', { replace: true });
+      } catch (err: unknown) {
+        const msg =
+          (err as { data?: { message?: string } })?.data?.message || '登录失败';
+        messageApi.error(msg);
+      }
     },
-    [dispatch],
+    [login, navigate, messageApi],
   );
 
   return (
@@ -106,7 +106,7 @@ export default function LoginPage() {
               <Button
                 type="primary"
                 htmlType="submit"
-                loading={loading}
+                loading={isLoading}
                 block
                 style={{ height: 44, borderRadius: 6 }}
               >

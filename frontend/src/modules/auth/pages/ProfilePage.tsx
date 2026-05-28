@@ -1,20 +1,18 @@
 import { useEffect } from 'react';
 import { Card, Form, Input, Button, Upload, App, Row, Col, Typography } from 'antd';
 import { CameraOutlined, UserOutlined, MailOutlined, SafetyOutlined } from '@ant-design/icons';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppSelector } from '@/hooks';
 import FadeIn from '@/components/common/FadeIn';
-import { updateProfile } from '../slice';
-import { handleApiError } from '@/services/errorHandler';
-import { useUploadFileMutation } from '@/services/adminApi';
+import { useUploadFileMutation, useUpdateProfileMutation } from '@/services/adminApi';
 import styles from './ProfilePage.module.css';
 
 const { Title } = Typography;
 
 export default function ProfilePage() {
   const { message } = App.useApp();
-  const dispatch = useAppDispatch();
-  const { user, loading } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state) => state.auth);
   const [uploadFile] = useUploadFileMutation();
+  const [updateProfile, { isLoading }] = useUpdateProfileMutation();
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -28,10 +26,11 @@ export default function ProfilePage() {
       const result = await uploadFile(file).unwrap();
       const currentName = form.getFieldValue('name') || user?.name || '';
       form.setFieldsValue({ avatar: result.url });
-      await dispatch(updateProfile({ name: currentName, avatar: result.url })).unwrap();
+      await updateProfile({ name: currentName, avatar: result.url }).unwrap();
       message.success('头像已更新');
-    } catch (err) {
-      handleApiError(err, message);
+    } catch (err: unknown) {
+      const msg = (err as { data?: { message?: string } })?.data?.message || '请求失败';
+      message.error(msg);
     }
     return false;
   };
@@ -46,11 +45,12 @@ export default function ProfilePage() {
     try {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { confirm_password: _unused, ...payload } = values;
-      await dispatch(updateProfile(payload)).unwrap();
+      await updateProfile(payload).unwrap();
       message.success('保存成功');
       form.resetFields(['current_password', 'password', 'confirm_password']);
-    } catch (err) {
-      handleApiError(err, message);
+    } catch (err: unknown) {
+      const msg = (err as { data?: { message?: string } })?.data?.message || '请求失败';
+      message.error(msg);
     }
   };
 
@@ -183,7 +183,7 @@ export default function ProfilePage() {
               </Row>
 
               <Form.Item style={{ marginBottom: 0, marginTop: 16 }}>
-                <Button type="primary" htmlType="submit" loading={loading}>
+                <Button type="primary" htmlType="submit" loading={isLoading}>
                   保存
                 </Button>
               </Form.Item>

@@ -1,9 +1,8 @@
 import React, { Suspense, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Spin } from 'antd';
-import { useAppDispatch, useAppSelector } from '@/hooks';
-import { fetchCurrentUser } from '@/modules/auth/slice';
-import { getToken } from '@/utils/token';
+import { useAppSelector } from '@/hooks';
+import { useGetCurrentUserQuery } from '@/services/adminApi';
 
 // Lazy loaded pages
 const LoginPage = React.lazy(
@@ -88,27 +87,23 @@ const routePermissionMap: Record<string, string> = {
 };
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, loading, permissions, user } = useAppSelector(
+  const { isAuthenticated, permissions, user } = useAppSelector(
     (state) => state.auth,
   );
-  const dispatch = useAppDispatch();
+  const token = useAppSelector((state) => state.auth.token);
+  const { isLoading: isFetchingUser } = useGetCurrentUserQuery(undefined, {
+    skip: !token || !!user,
+  });
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    const token = getToken();
-    if (token && !user) {
-      dispatch(fetchCurrentUser());
-    }
-  }, [dispatch, user]);
-
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
+    if (!isFetchingUser && !isAuthenticated) {
       navigate('/login', { replace: true, state: { from: location } });
     }
-  }, [isAuthenticated, loading, navigate, location]);
+  }, [isAuthenticated, isFetchingUser, navigate, location]);
 
-  if (loading && !user) {
+  if (isFetchingUser && !user) {
     return (
       <div
         style={{

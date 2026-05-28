@@ -2,17 +2,22 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dropdown, Avatar, Space } from 'antd';
 import { UserOutlined, LogoutOutlined, ProfileOutlined } from '@ant-design/icons';
-import { useAppDispatch, useAppSelector } from '@/hooks';
-import { logout } from '../slice';
+import { useAppSelector } from '@/hooks';
+import { useLogoutMutation } from '@/services/adminApi';
 
 export default function UserDropdown() {
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
+  const [logout] = useLogoutMutation();
 
-  const handleLogout = useCallback(() => {
-    dispatch(logout());
-  }, [dispatch]);
+  const handleLogout = useCallback(async () => {
+    try {
+      await logout().unwrap();
+    } catch {
+      // ignore
+    }
+    navigate('/login');
+  }, [logout, navigate]);
 
   const menuItems = [
     {

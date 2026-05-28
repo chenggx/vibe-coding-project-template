@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import LoginPage from '../pages/LoginPage';
 import authReducer from '../slice';
+import { adminApi } from '@/services/adminApi';
 
 vi.mock('@/utils/token', () => ({
   getToken: vi.fn(() => null),
@@ -15,9 +16,12 @@ vi.mock('@/utils/token', () => ({
 
 function createTestStore() {
   return configureStore({
-    reducer: { auth: authReducer },
+    reducer: {
+      auth: authReducer,
+      [adminApi.reducerPath]: adminApi.reducer,
+    },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({ serializableCheck: false }),
+      getDefaultMiddleware({ serializableCheck: false }).concat(adminApi.middleware),
   });
 }
 
@@ -42,7 +46,6 @@ describe('LoginPage', () => {
 
   it('应该渲染标题、输入框和登录按钮', () => {
     renderWithProviders(<LoginPage />);
-
     expect(
       screen.getByRole('heading', { name: '欢迎回来' }),
     ).toBeInTheDocument();
