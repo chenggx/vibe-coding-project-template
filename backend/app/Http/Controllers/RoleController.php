@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
-use App\Services\PermissionService;
-use App\Support\ApiResponse;
+use App\Filters\RoleFilter;
 use App\Http\Requests\Role\IndexRequest;
 use App\Http\Requests\Role\StoreRequest;
 use App\Http\Requests\Role\UpdateRequest;
+use App\Models\Role;
+use App\Services\PermissionService;
+use App\Support\ApiResponse;
 
 class RoleController extends Controller
 {
-    public function index(IndexRequest $request)
+    public function index(IndexRequest $request, RoleFilter $filter)
     {
-        $query = Role::query()->withCount('users');
+        $query = Role::query()->withCount('users')->filter($filter);
         $query->orderBy('created_at', 'desc');
 
         return ApiResponse::paginate($query->paginate($request->input('per_page', 15)));

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Filters\UserFilter;
 use App\Http\Requests\User\IndexRequest;
 use App\Http\Requests\User\StoreRequest;
 use App\Http\Requests\User\UpdateRequest;
@@ -14,18 +15,9 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index(IndexRequest $request)
+    public function index(IndexRequest $request, UserFilter $filter)
     {
-        $query = User::query()->with('roles');
-
-        if ($request->filled('name')) {
-            $query->where('name', 'like', "%{$request->name}%");
-        }
-
-        if ($request->filled('email')) {
-            $query->where('email', 'like', "%{$request->email}%");
-        }
-
+        $query = User::query()->with('roles')->filter($filter);
         $query->orderBy('created_at', 'desc');
 
         return ApiResponse::paginate($query->paginate($request->input('per_page', 15)));

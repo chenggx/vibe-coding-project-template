@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Traits\Filterable;
 use App\Traits\HasMenuPermissions;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,7 +14,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, HasMenuPermissions, Notifiable;
+    use Filterable, HasApiTokens, HasFactory, HasMenuPermissions, Notifiable;
 
     protected $fillable = [
         'name',
