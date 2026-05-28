@@ -5,10 +5,9 @@ import {
   Table,
   Space,
   Switch,
-  Modal,
   Form,
   Input,
-  message,
+  App,
 } from 'antd';
 import {
   PlusOutlined,
@@ -27,6 +26,7 @@ import type { User } from '../types';
 
 export default function UserListPage() {
   const dispatch = useAppDispatch();
+  const { message, modal } = App.useApp();
   const { list, meta, loading } = useAppSelector((state) => state.user);
   const currentUser = useAppSelector((state) => state.auth.user);
   const pagination = usePagination();
@@ -70,7 +70,7 @@ export default function UserListPage() {
   };
 
   const handleDelete = (user: User) => {
-    Modal.confirm({
+    modal.confirm({
       title: '确认删除',
       icon: <ExclamationCircleOutlined />,
       content: `确定要删除用户「${user.name}」吗？`,

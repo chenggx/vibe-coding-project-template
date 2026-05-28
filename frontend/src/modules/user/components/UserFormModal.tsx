@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Modal, Form, Input, Select, Switch, DatePicker, message } from 'antd';
+import { Modal, Form, Input, Select, Switch, DatePicker, App } from 'antd';
 import { useAppDispatch, useAppSelector, usePermission } from '@/hooks';
 import { createUser, updateUser } from '../slice';
 import { fetchRoles } from '@/modules/role/slice';
@@ -17,6 +17,7 @@ interface UserFormModalProps {
 export default function UserFormModal({ open, user, onCancel, onSuccess }: UserFormModalProps) {
   const [form] = Form.useForm();
   const dispatch = useAppDispatch();
+  const { message } = App.useApp();
   const { list: roles } = useAppSelector((state) => state.role);
   const { hasPermission } = usePermission();
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Card, Button, Table, Space, Modal, message } from 'antd';
+import { Card, Button, Table, Space, App } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector, usePagination } from '@/hooks';
 import PermissionButton from '@/components/common/PermissionButton';
@@ -15,6 +15,7 @@ export default function RoleListPage() {
   const { list, meta, loading } = useAppSelector((state) => state.role);
   const { allMenus } = useAppSelector((state) => state.menu);
   const pagination = usePagination();
+  const { message, modal } = App.useApp();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingRole, setEditingRole] = useState<Role | null>(null);
 
@@ -47,7 +48,7 @@ export default function RoleListPage() {
   };
 
   const handleDelete = (role: Role) => {
-    Modal.confirm({
+    modal.confirm({
       title: '确认删除',
       icon: <ExclamationCircleOutlined />,
       content: `确定要删除角色「${role.display_name}」吗？`,

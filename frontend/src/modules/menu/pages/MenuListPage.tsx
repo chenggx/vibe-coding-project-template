@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Card, message, Modal } from 'antd';
+import { Card, App } from 'antd';
 import {
   PlusOutlined,
   ExclamationCircleOutlined,
@@ -14,6 +14,7 @@ import type { MenuTree } from '@/types/menu';
 
 export default function MenuListPage() {
   const dispatch = useAppDispatch();
+  const { message, modal } = App.useApp();
   const { allMenus, loading, error } = useAppSelector((state) => state.menu);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingMenu, setEditingMenu] = useState<MenuTree | null>(null);
@@ -39,7 +40,7 @@ export default function MenuListPage() {
   };
 
   const handleDelete = (menu: MenuTree) => {
-    Modal.confirm({
+    modal.confirm({
       title: '确认删除',
       icon: <ExclamationCircleOutlined />,
       content: `确定要删除菜单「${menu.name}」吗？`,

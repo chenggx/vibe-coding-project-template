@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Modal, Form, Input, message } from 'antd';
+import { Modal, Form, Input, App } from 'antd';
 import { useAppDispatch } from '@/hooks';
 import { createRole, updateRole } from '../slice';
 import MenuPermissionTree from './MenuPermissionTree';
@@ -17,6 +17,7 @@ interface RoleFormModalProps {
 export default function RoleFormModal({ open, role, allMenus, onCancel, onSuccess }: RoleFormModalProps) {
   const [form] = Form.useForm();
   const dispatch = useAppDispatch();
+  const { message } = App.useApp();
 
   useEffect(() => {
     if (open) {

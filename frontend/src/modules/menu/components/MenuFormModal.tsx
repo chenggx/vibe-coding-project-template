@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Modal, Form, Input, InputNumber, Radio, TreeSelect, message } from 'antd';
+import { Modal, Form, Input, InputNumber, Radio, TreeSelect, App } from 'antd';
 import { useAppDispatch } from '@/hooks';
 import { createMenu, updateMenu } from '../slice';
 import type { MenuTree } from '@/types/menu';
@@ -44,6 +44,7 @@ export default function MenuFormModal({
 }: MenuFormModalProps) {
   const [form] = Form.useForm();
   const dispatch = useAppDispatch();
+  const { message } = App.useApp();
   const menuType = Form.useWatch('type', form);
 
   useEffect(() => {
