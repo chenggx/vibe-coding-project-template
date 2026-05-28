@@ -30,9 +30,8 @@ class PermissionService
         return cache()->remember(
             $this->getCacheKey($user),
             3600,
-            fn () => $user->roles()->with('menus')->get()
-                ->pluck('menus.*.permission')
-                ->flatten()
+            fn () => $user->menus()
+                ->pluck('permission')
                 ->unique()
                 ->filter()
                 ->values()
