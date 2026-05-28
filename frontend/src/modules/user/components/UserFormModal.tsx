@@ -7,6 +7,7 @@ import {
   useGetRolesQuery,
 } from '@/services/adminApi';
 import ImageUploader from '@/components/common/ImageUploader';
+import { getApiErrorMessage } from '@/utils/error';
 import dayjs from 'dayjs';
 import type { User, CreateUserDto } from '../types';
 
@@ -76,8 +77,7 @@ export default function UserFormModal({ open, user, onCancel, onSuccess }: UserF
       if (err && typeof err === 'object' && 'errorFields' in err) {
         return;
       }
-      const errorMsg = typeof err === 'string' ? err : err instanceof Error ? err.message : '操作失败';
-      message.error(errorMsg);
+      message.error(getApiErrorMessage(err));
     }
   };
 

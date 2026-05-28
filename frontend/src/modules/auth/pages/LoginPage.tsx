@@ -5,6 +5,7 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useAppSelector } from '@/hooks';
 import FadeIn from '@/components/common/FadeIn';
 import { useLoginMutation } from '@/services/adminApi';
+import { getApiErrorMessage } from '@/utils/error';
 
 const { Title, Text } = Typography;
 
@@ -34,9 +35,7 @@ export default function LoginPage() {
         await login(values).unwrap();
         navigate(from, { replace: true });
       } catch (err: unknown) {
-        const msg =
-          (err as { data?: { message?: string } })?.data?.message || '登录失败';
-        messageApi.error(msg);
+        messageApi.error(getApiErrorMessage(err, '登录失败'));
       }
     },
     [login, navigate, messageApi, from],

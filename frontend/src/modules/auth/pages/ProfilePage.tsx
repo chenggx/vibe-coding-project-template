@@ -4,6 +4,7 @@ import { CameraOutlined, UserOutlined, MailOutlined, SafetyOutlined } from '@ant
 import { useAppSelector } from '@/hooks';
 import FadeIn from '@/components/common/FadeIn';
 import { useUploadFileMutation, useUpdateProfileMutation } from '@/services/adminApi';
+import { getApiErrorMessage } from '@/utils/error';
 import styles from './ProfilePage.module.css';
 
 const { Title } = Typography;
@@ -29,8 +30,7 @@ export default function ProfilePage() {
       await updateProfile({ name: currentName, avatar: result.url }).unwrap();
       message.success('头像已更新');
     } catch (err: unknown) {
-      const msg = (err as { data?: { message?: string } })?.data?.message || '请求失败';
-      message.error(msg);
+      message.error(getApiErrorMessage(err, '请求失败'));
     }
     return false;
   };
@@ -49,8 +49,7 @@ export default function ProfilePage() {
       message.success('保存成功');
       form.resetFields(['current_password', 'password', 'confirm_password']);
     } catch (err: unknown) {
-      const msg = (err as { data?: { message?: string } })?.data?.message || '请求失败';
-      message.error(msg);
+      message.error(getApiErrorMessage(err, '请求失败'));
     }
   };
 

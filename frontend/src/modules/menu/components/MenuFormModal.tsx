@@ -4,6 +4,7 @@ import {
   useCreateMenuMutation,
   useUpdateMenuMutation,
 } from '@/services/adminApi';
+import { getApiErrorMessage } from '@/utils/error';
 import type { MenuTree } from '@/types/menu';
 import type { CreateMenuDto } from '../types';
 import IconSelector from './IconSelector';
@@ -93,9 +94,7 @@ export default function MenuFormModal({
       if (err && typeof err === 'object' && 'errorFields' in err) {
         return;
       }
-      const errorMsg =
-        typeof err === 'string' ? err : err instanceof Error ? err.message : '操作失败';
-      message.error(errorMsg);
+      message.error(getApiErrorMessage(err));
     }
   };
 

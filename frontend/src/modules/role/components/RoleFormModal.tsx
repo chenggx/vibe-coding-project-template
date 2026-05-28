@@ -4,6 +4,7 @@ import {
   useCreateRoleMutation,
   useUpdateRoleMutation,
 } from '@/services/adminApi';
+import { getApiErrorMessage } from '@/utils/error';
 import MenuPermissionTree from './MenuPermissionTree';
 import type { Role, CreateRoleDto } from '../types';
 import type { MenuTree } from '@/types/menu';
@@ -60,8 +61,7 @@ export default function RoleFormModal({ open, role, allMenus = [], onCancel, onS
       if (err && typeof err === 'object' && 'errorFields' in err) {
         return;
       }
-      const errorMsg = typeof err === 'string' ? err : err instanceof Error ? err.message : '操作失败';
-      message.error(errorMsg);
+      message.error(getApiErrorMessage(err));
     }
   };
 

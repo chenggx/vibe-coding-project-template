@@ -10,6 +10,7 @@ import {
   useGetAllMenusQuery,
   useDeleteMenuMutation,
 } from '@/services/adminApi';
+import { getApiErrorMessage } from '@/utils/error';
 import MenuTreeTable from '../components/MenuTreeTable';
 import MenuFormModal from '../components/MenuFormModal';
 import type { MenuTree } from '@/types/menu';
@@ -43,13 +44,7 @@ export default function MenuListPage() {
           await deleteMenu(menu.id).unwrap();
           message.success('删除成功');
         } catch (err: unknown) {
-          const errorMsg =
-            typeof err === 'string'
-              ? err
-              : err instanceof Error
-                ? err.message
-                : '删除失败';
-          message.error(errorMsg);
+          message.error(getApiErrorMessage(err, '删除失败'));
         }
       },
     });

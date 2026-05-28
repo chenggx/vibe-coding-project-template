@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { App } from 'antd';
+import { getApiErrorMessage } from '@/utils/error';
 
 export function useCrudTable<T extends { id: number }>() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -22,8 +23,12 @@ export function useCrudTable<T extends { id: number }>() {
         title: '确认删除',
         content: `确定要删除吗？`,
         onOk: async () => {
-          await options.onConfirm(options.item.id);
-          message.success('删除成功');
+          try {
+            await options.onConfirm(options.item.id);
+            message.success('删除成功');
+          } catch (err: unknown) {
+            message.error(getApiErrorMessage(err, '删除失败'));
+          }
         },
       });
     },

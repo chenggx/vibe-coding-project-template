@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Upload, Button, Image, Space, App } from 'antd';
 import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useUploadFileMutation } from '@/services/adminApi';
+import { getApiErrorMessage } from '@/utils/error';
 
 interface ImageUploaderProps {
   value?: string;
@@ -51,7 +52,7 @@ export default function ImageUploader({
       message.success('上传成功');
       onSuccess?.(result);
     } catch (err: unknown) {
-      const messageText = err instanceof Error ? err.message : '上传失败';
+      const messageText = getApiErrorMessage(err, '上传失败');
       message.error(messageText);
       onError?.(new Error(messageText));
     }
