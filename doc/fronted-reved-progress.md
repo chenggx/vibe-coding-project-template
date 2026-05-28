@@ -91,11 +91,11 @@
 
 | Phase | 状态 | 备注 |
 |-------|------|------|
-| Phase 1 | 🔲 未开始 | |
-| Phase 2 | 🔲 未开始 | 依赖 Phase 1 |
-| Phase 3 | 🔲 未开始 | 依赖 Phase 1 |
-| Phase 4 | 🔲 未开始 | 依赖 Phase 1 |
-| Phase 5 | 🔲 未开始 | 依赖 Phase 1-4 |
-| Phase 6 | 🔲 未开始 | 依赖 Phase 1-5 |
+| Phase 1 | ✅ 已完成 | RTK Query 基础设施搭建 |
+| Phase 2 | ✅ 已完成 | Upload 模块迁移 |
+| Phase 3 | ✅ 已完成 | Menu 模块迁移 |
+| Phase 4 | ✅ 已完成 | User + Role 模块迁移 |
+| Phase 5 | ✅ 已完成 | Auth 模块迁移 |
+| Phase 6 | ✅ 已完成 | Cleanup：移除 axios、统一测试工具、修复遗留问题 |
 
-> 每个 Phase 完成后更新上方状态，并在对应 `doc/tasks/` 文件中勾选子任务。
+> 全部 6 个 Phase 已完成。构建、测试、Lint 均通过。

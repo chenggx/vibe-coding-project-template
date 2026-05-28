@@ -8,6 +8,7 @@ import {
   Form,
   Input,
 } from 'antd';
+import type { FormProps } from 'antd';
 import {
   PlusOutlined,
   SearchOutlined,
@@ -25,25 +26,29 @@ import UserFormModal from '../components/UserFormModal';
 import RoleTag from '../components/RoleTag';
 import type { User } from '../types';
 
+interface SearchValues {
+  name?: string;
+  email?: string;
+}
+
 export default function UserListPage() {
   const currentUser = useAppSelector((state) => state.auth.user);
   const pagination = usePagination();
-  const [searchForm] = Form.useForm();
-  const [searchTrigger, setSearchTrigger] = useState(0);
+  const [searchValues, setSearchValues] = useState<SearchValues>({});
+  const [formKey, setFormKey] = useState(0);
   const { modalOpen, editingItem, handleAdd, handleEdit, handleDelete, setModalOpen } =
     useCrudTable<User>();
 
   const { current: page, pageSize } = pagination;
 
-  const params = useMemo(() => {
-    void searchTrigger;
-    const values = searchForm.getFieldsValue();
-    return {
-      ...values,
+  const params = useMemo(
+    () => ({
+      ...searchValues,
       page,
       per_page: pageSize,
-    };
-  }, [searchForm, page, pageSize, searchTrigger]);
+    }),
+    [searchValues, page, pageSize],
+  );
 
   const { data, isLoading } = useGetUsersQuery(params);
   const [deleteUser] = useDeleteUserMutation();
@@ -51,15 +56,15 @@ export default function UserListPage() {
   const list = data?.data ?? [];
   const meta = data?.meta ?? null;
 
-  const handleSearch = () => {
+  const handleSearch: FormProps<SearchValues>['onFinish'] = (values) => {
     pagination.reset();
-    setSearchTrigger((t) => t + 1);
+    setSearchValues(values);
   };
 
   const handleReset = () => {
-    searchForm.resetFields();
+    setSearchValues({});
     pagination.reset();
-    setSearchTrigger((t) => t + 1);
+    setFormKey((k) => k + 1);
   };
 
   const columns = useMemo(
@@ -138,7 +143,7 @@ export default function UserListPage() {
   return (
     <FadeIn stagger>
       <Card style={{ marginBottom: 16, background: 'var(--color-bg-card)' }}>
-        <Form form={searchForm} layout="inline" style={{ marginBottom: 0 }}>
+        <Form key={formKey} layout="inline" style={{ marginBottom: 0 }} onFinish={handleSearch}>
           <Form.Item name="name">
             <Input placeholder="姓名" allowClear />
           </Form.Item>
@@ -150,7 +155,7 @@ export default function UserListPage() {
               <Button
                 type="primary"
                 icon={<SearchOutlined />}
-                onClick={handleSearch}
+                htmlType="submit"
               >
                 搜索
               </Button>
