@@ -3,8 +3,8 @@ import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import UserFormModal from '../components/UserFormModal';
-import userReducer from '../slice';
-import roleReducer from '@/modules/role/slice';
+import rootReducer from '@/app/rootReducer';
+import { adminApi } from '@/services/adminApi';
 
 vi.mock('@/hooks', () => ({
   useAppDispatch: () => vi.fn(),
@@ -12,6 +12,7 @@ vi.mock('@/hooks', () => ({
     selector({
       role: { list: [], meta: null, loading: false, error: null },
     }),
+  usePermission: () => ({ hasPermission: () => true }),
 }));
 
 vi.mock('@/components/common/ImageUploader', () => ({
@@ -20,10 +21,9 @@ vi.mock('@/components/common/ImageUploader', () => ({
 
 const createTestStore = () =>
   configureStore({
-    reducer: {
-      user: userReducer,
-      role: roleReducer,
-    },
+    reducer: rootReducer,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({ serializableCheck: false }).concat(adminApi.middleware),
   });
 
 const renderWithProviders = (ui: React.ReactElement) => {

@@ -44,7 +44,7 @@ describe('LoginPage', () => {
     renderWithProviders(<LoginPage />);
 
     expect(
-      screen.getByRole('heading', { name: '后台管理系统' }),
+      screen.getByRole('heading', { name: '欢迎回来' }),
     ).toBeInTheDocument();
     expect(screen.getByPlaceholderText('邮箱')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('密码')).toBeInTheDocument();

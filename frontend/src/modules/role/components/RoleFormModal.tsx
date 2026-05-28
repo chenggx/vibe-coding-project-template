@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
 import { Modal, Form, Input, App } from 'antd';
-import { useAppDispatch } from '@/hooks';
-import { createRole, updateRole } from '../slice';
+import {
+  useCreateRoleMutation,
+  useUpdateRoleMutation,
+} from '@/services/adminApi';
 import MenuPermissionTree from './MenuPermissionTree';
 import type { Role, CreateRoleDto } from '../types';
 import type { MenuTree } from '@/types/menu';
@@ -16,8 +18,9 @@ interface RoleFormModalProps {
 
 export default function RoleFormModal({ open, role, allMenus, onCancel, onSuccess }: RoleFormModalProps) {
   const [form] = Form.useForm();
-  const dispatch = useAppDispatch();
   const { message } = App.useApp();
+  const [createRole] = useCreateRoleMutation();
+  const [updateRole] = useUpdateRoleMutation();
 
   useEffect(() => {
     if (open) {
@@ -46,10 +49,10 @@ export default function RoleFormModal({ open, role, allMenus, onCancel, onSucces
       };
 
       if (role) {
-        await dispatch(updateRole({ id: role.id, data: dto })).unwrap();
+        await updateRole({ id: role.id, data: dto }).unwrap();
         message.success('更新成功');
       } else {
-        await dispatch(createRole(dto)).unwrap();
+        await createRole(dto).unwrap();
         message.success('创建成功');
       }
       onSuccess();

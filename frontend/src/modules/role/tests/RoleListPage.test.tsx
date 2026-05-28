@@ -4,7 +4,6 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import RoleListPage from '../pages/RoleListPage';
-import roleReducer from '../slice';
 import authReducer from '@/modules/auth/slice';
 import { adminApi } from '@/services/adminApi';
 
@@ -14,18 +13,50 @@ vi.mock('@/utils/token', () => ({
   clearToken: vi.fn(),
 }));
 
-vi.mock('../slice', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../slice')>();
-  return {
-    ...actual,
-    fetchRoles: vi.fn(() => ({ type: 'role/fetchRoles' })),
-  };
-});
+vi.mock('@/hooks', () => ({
+  useAppDispatch: () => vi.fn(),
+  useAppSelector: (selector: (state: Record<string, unknown>) => unknown) =>
+    selector({
+      auth: {
+        token: null,
+        user: { id: 1, name: 'Admin', email: 'admin@test.com', avatar: null, status: true, expires_at: null, remarks: null, created_at: '', updated_at: '', roles: [] },
+        permissions: [],
+        userMenus: [],
+        isAuthenticated: true,
+        loading: false,
+        error: null,
+      },
+    }),
+  usePermission: () => ({ hasPermission: () => true, permissions: [] }),
+  usePagination: () => ({
+    current: 1,
+    pageSize: 15,
+    onChange: vi.fn(),
+    reset: vi.fn(),
+    getPaginationConfig: vi.fn(() => ({
+      current: 1,
+      pageSize: 15,
+      total: 0,
+      showSizeChanger: true,
+      showQuickJumper: true,
+      showTotal: vi.fn(),
+      onChange: vi.fn(),
+    })),
+  }),
+  useCrudTable: () => ({
+    modalOpen: false,
+    editingItem: null,
+    handleAdd: vi.fn(),
+    handleEdit: vi.fn(),
+    handleDelete: vi.fn(),
+    setModalOpen: vi.fn(),
+    setEditingItem: vi.fn(),
+  }),
+}));
 
 function createTestStore() {
   return configureStore({
     reducer: {
-      role: roleReducer,
       auth: authReducer,
       [adminApi.reducerPath]: adminApi.reducer,
     },

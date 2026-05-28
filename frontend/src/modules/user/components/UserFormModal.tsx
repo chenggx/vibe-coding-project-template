@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
 import { Modal, Form, Input, Select, Switch, DatePicker, App } from 'antd';
-import { useAppDispatch, useAppSelector, usePermission } from '@/hooks';
-import { createUser, updateUser } from '../slice';
-import { fetchRoles } from '@/modules/role/slice';
+import { usePermission } from '@/hooks';
+import {
+  useCreateUserMutation,
+  useUpdateUserMutation,
+  useGetRolesQuery,
+} from '@/services/adminApi';
 import ImageUploader from '@/components/common/ImageUploader';
 import dayjs from 'dayjs';
 import type { User, CreateUserDto } from '../types';
@@ -16,16 +19,13 @@ interface UserFormModalProps {
 
 export default function UserFormModal({ open, user, onCancel, onSuccess }: UserFormModalProps) {
   const [form] = Form.useForm();
-  const dispatch = useAppDispatch();
   const { message } = App.useApp();
-  const { list: roles } = useAppSelector((state) => state.role);
   const { hasPermission } = usePermission();
+  const { data: rolesData } = useGetRolesQuery({ per_page: 100 }, { skip: !open || !hasPermission('roles.index') });
+  const [createUser] = useCreateUserMutation();
+  const [updateUser] = useUpdateUserMutation();
 
-  useEffect(() => {
-    if (open && hasPermission('roles.index')) {
-      dispatch(fetchRoles({ per_page: 100 }));
-    }
-  }, [open, dispatch, hasPermission]);
+  const roles = rolesData?.data ?? [];
 
   useEffect(() => {
     if (open) {
@@ -65,10 +65,10 @@ export default function UserFormModal({ open, user, onCancel, onSuccess }: UserF
       if (user) {
         const updateDto = { ...dto };
         if (!updateDto.password) delete updateDto.password;
-        await dispatch(updateUser({ id: user.id, data: updateDto })).unwrap();
+        await updateUser({ id: user.id, data: updateDto }).unwrap();
         message.success('更新成功');
       } else {
-        await dispatch(createUser(dto)).unwrap();
+        await createUser(dto).unwrap();
         message.success('创建成功');
       }
       onSuccess();

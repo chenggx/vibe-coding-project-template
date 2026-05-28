@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import type { PaginationMeta } from '@/types/api';
 
 interface UsePaginationOptions {
@@ -20,15 +20,18 @@ export function usePagination(options: UsePaginationOptions = {}) {
     setPageSize(defaultPageSize);
   }, [defaultPageSize]);
 
-  const getPaginationConfig = (meta: PaginationMeta | null) => ({
-    current: meta?.current_page ?? current,
-    pageSize: meta?.per_page ?? pageSize,
-    total: meta?.total ?? 0,
-    showSizeChanger: true,
-    showQuickJumper: true,
-    showTotal: (total: number) => `共 ${total} 条`,
-    onChange,
-  });
+  const paginationConfig = useMemo(
+    () => (meta: PaginationMeta | null) => ({
+      current: meta?.current_page ?? current,
+      pageSize: meta?.per_page ?? pageSize,
+      total: meta?.total ?? 0,
+      showSizeChanger: true,
+      showQuickJumper: true,
+      showTotal: (total: number) => `共 ${total} 条`,
+      onChange,
+    }),
+    [current, pageSize, onChange],
+  );
 
-  return { current, pageSize, onChange, reset, getPaginationConfig };
+  return { current, pageSize, onChange, reset, getPaginationConfig: paginationConfig };
 }

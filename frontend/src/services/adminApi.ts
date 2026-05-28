@@ -64,6 +64,9 @@ const customBaseQuery: BaseQueryFn<
 import type { UploadResponse } from '@/modules/upload/types';
 import type { MenuTree } from '@/types/menu';
 import type { CreateMenuDto, UpdateMenuDto } from '@/modules/menu/types';
+import type { User, CreateUserDto, UpdateUserDto, FetchUsersParams } from '@/modules/user/types';
+import type { Role, CreateRoleDto, UpdateRoleDto, FetchRolesParams } from '@/modules/role/types';
+import type { PaginationMeta } from '@/types/api';
 
 export const adminApi = createApi({
   reducerPath: 'adminApi',
@@ -93,6 +96,44 @@ export const adminApi = createApi({
       query: (id) => ({ url: `/menus/${id}`, method: 'DELETE' }),
       invalidatesTags: ['Menu'],
     }),
+    getUsers: build.query<{ data: User[]; meta: PaginationMeta }, FetchUsersParams | void>({
+      query: (params) => ({ url: '/users', params }),
+      providesTags: (result) =>
+        result ? [...result.data.map((u) => ({ type: 'User' as const, id: u.id })), 'User'] : ['User'],
+    }),
+    createUser: build.mutation<User, CreateUserDto>({
+      query: (body) => ({ url: '/users', method: 'POST', body }),
+      invalidatesTags: ['User'],
+    }),
+    updateUser: build.mutation<User, { id: number; data: UpdateUserDto }>({
+      query: ({ id, data }) => ({ url: `/users/${id}`, method: 'PUT', body: data }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'User', id }, 'User'],
+    }),
+    deleteUser: build.mutation<void, number>({
+      query: (id) => ({ url: `/users/${id}`, method: 'DELETE' }),
+      invalidatesTags: ['User'],
+    }),
+    getRoles: build.query<{ data: Role[]; meta: PaginationMeta }, FetchRolesParams | void>({
+      query: (params) => ({ url: '/roles', params }),
+      providesTags: (result) =>
+        result ? [...result.data.map((r) => ({ type: 'Role' as const, id: r.id })), 'Role'] : ['Role'],
+    }),
+    getRole: build.query<Role, number>({
+      query: (id) => `/roles/${id}`,
+      providesTags: (result, error, id) => [{ type: 'Role', id }],
+    }),
+    createRole: build.mutation<Role, CreateRoleDto>({
+      query: (body) => ({ url: '/roles', method: 'POST', body }),
+      invalidatesTags: ['Role'],
+    }),
+    updateRole: build.mutation<Role, { id: number; data: UpdateRoleDto }>({
+      query: ({ id, data }) => ({ url: `/roles/${id}`, method: 'PUT', body: data }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Role', id }, 'Role'],
+    }),
+    deleteRole: build.mutation<void, number>({
+      query: (id) => ({ url: `/roles/${id}`, method: 'DELETE' }),
+      invalidatesTags: ['Role'],
+    }),
   }),
 });
 
@@ -102,4 +143,13 @@ export const {
   useCreateMenuMutation,
   useUpdateMenuMutation,
   useDeleteMenuMutation,
+  useGetUsersQuery,
+  useCreateUserMutation,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
+  useGetRolesQuery,
+  useGetRoleQuery,
+  useCreateRoleMutation,
+  useUpdateRoleMutation,
+  useDeleteRoleMutation,
 } = adminApi;

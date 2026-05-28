@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Card, Col, Row } from 'antd';
 import {
   UserOutlined,
@@ -8,40 +7,28 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useAppSelector } from '@/hooks';
 import FadeIn from '@/components/common/FadeIn';
 import CountUp from '@/components/common/CountUp';
-import { fetchUsers } from '@/modules/user/slice';
-import { fetchRoles } from '@/modules/role/slice';
-import { useGetAllMenusQuery } from '@/services/adminApi';
+import {
+  useGetUsersQuery,
+  useGetRolesQuery,
+  useGetAllMenusQuery,
+} from '@/services/adminApi';
 import StatsCard from '../components/StatsCard';
 import WelcomeSection from '../components/WelcomeSection';
 import ActivityTimeline from '../components/ActivityTimeline';
 import styles from './DashboardPage.module.css';
 
 export default function DashboardPage() {
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
-  const { list: users, meta: usersMeta } = useAppSelector(
-    (state) => state.user,
-  );
-  const { list: roles, meta: rolesMeta } = useAppSelector(
-    (state) => state.role,
-  );
+  const { data: usersData } = useGetUsersQuery({ page: 1, per_page: 1 });
+  const { data: rolesData } = useGetRolesQuery({ page: 1, per_page: 1 });
   const { data: allMenus = [] } = useGetAllMenusQuery();
 
-  useEffect(() => {
-    if (users.length === 0 && !usersMeta) {
-      dispatch(fetchUsers({ page: 1, per_page: 1 }));
-    }
-    if (roles.length === 0 && !rolesMeta) {
-      dispatch(fetchRoles({ page: 1, per_page: 1 }));
-    }
-  }, [dispatch, users.length, roles.length, usersMeta, rolesMeta]);
-
-  const userCount = usersMeta?.total ?? users.length;
-  const roleCount = rolesMeta?.total ?? roles.length;
+  const userCount = usersData?.meta?.total ?? 0;
+  const roleCount = rolesData?.meta?.total ?? 0;
   const menuCount = allMenus.length;
 
   const quickActions = [

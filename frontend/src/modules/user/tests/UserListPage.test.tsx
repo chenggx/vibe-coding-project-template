@@ -4,8 +4,6 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router-dom';
 import UserListPage from '../pages/UserListPage';
-import userReducer from '../slice';
-import roleReducer from '@/modules/role/slice';
 import authReducer from '@/modules/auth/slice';
 import { adminApi } from '@/services/adminApi';
 
@@ -17,8 +15,6 @@ vi.mock('@/hooks', () => ({
   useAppDispatch: () => vi.fn(),
   useAppSelector: (selector: (state: Record<string, unknown>) => unknown) =>
     selector({
-      user: { list: [], meta: null, loading: false, error: null },
-      role: { list: [], meta: null, loading: false, error: null },
       auth: {
         user: { id: 1, name: 'Admin', email: 'admin@test.com', avatar: null, status: true, expires_at: null, remarks: null, created_at: '', updated_at: '', roles: [] },
         permissions: [],
@@ -28,6 +24,7 @@ vi.mock('@/hooks', () => ({
         error: null,
       },
     }),
+  usePermission: () => ({ hasPermission: () => true, permissions: [] }),
   usePagination: () => ({
     current: 1,
     pageSize: 15,
@@ -43,13 +40,20 @@ vi.mock('@/hooks', () => ({
       onChange: vi.fn(),
     })),
   }),
+  useCrudTable: () => ({
+    modalOpen: false,
+    editingItem: null,
+    handleAdd: vi.fn(),
+    handleEdit: vi.fn(),
+    handleDelete: vi.fn(),
+    setModalOpen: vi.fn(),
+    setEditingItem: vi.fn(),
+  }),
 }));
 
 const createTestStore = () =>
   configureStore({
     reducer: {
-      user: userReducer,
-      role: roleReducer,
       auth: authReducer,
       [adminApi.reducerPath]: adminApi.reducer,
     },

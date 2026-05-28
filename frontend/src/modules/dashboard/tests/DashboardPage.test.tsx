@@ -5,10 +5,14 @@ import { BrowserRouter } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import DashboardPage from '../pages/DashboardPage';
 import authReducer from '@/modules/auth/slice';
+import { adminApi } from '@/services/adminApi';
 
 function createTestStore() {
   return configureStore({
-    reducer: { auth: authReducer },
+    reducer: {
+      auth: authReducer,
+      [adminApi.reducerPath]: adminApi.reducer,
+    },
     preloadedState: {
       auth: {
         user: { id: 1, name: 'Admin' },
@@ -17,6 +21,8 @@ function createTestStore() {
         userMenus: [],
       },
     },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({ serializableCheck: false }).concat(adminApi.middleware),
   });
 }
 
@@ -37,15 +43,14 @@ describe('DashboardPage', () => {
 
   it('应该渲染统计卡片', () => {
     renderWithProviders(<DashboardPage />);
-    expect(screen.getByText('用户总数')).toBeInTheDocument();
-    expect(screen.getByText('角色数量')).toBeInTheDocument();
-    expect(screen.getByText('菜单节点')).toBeInTheDocument();
-    expect(screen.getByText('系统状态')).toBeInTheDocument();
+    expect(screen.getByText('总用户数')).toBeInTheDocument();
+    expect(screen.getByText('总角色数')).toBeInTheDocument();
+    expect(screen.getByText('总菜单数')).toBeInTheDocument();
   });
 
   it('应该渲染快捷操作', () => {
     renderWithProviders(<DashboardPage />);
-    expect(screen.getByText('新增用户')).toBeInTheDocument();
+    expect(screen.getByText('用户管理')).toBeInTheDocument();
     expect(screen.getByText('角色管理')).toBeInTheDocument();
   });
 });

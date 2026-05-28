@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Card,
   Button,
@@ -7,46 +7,49 @@ import {
   Switch,
   Form,
   Input,
-  App,
 } from 'antd';
 import {
   PlusOutlined,
   SearchOutlined,
   ReloadOutlined,
-  ExclamationCircleOutlined,
 } from '@ant-design/icons';
-import { useAppDispatch, useAppSelector, usePagination } from '@/hooks';
+import { useAppSelector, usePagination, useCrudTable } from '@/hooks';
 import PermissionButton from '@/components/common/PermissionButton';
 import PermissionWrapper from '@/components/common/PermissionWrapper';
 import FadeIn from '@/components/common/FadeIn';
-import { fetchUsers, deleteUser } from '../slice';
+import {
+  useGetUsersQuery,
+  useDeleteUserMutation,
+} from '@/services/adminApi';
 import UserFormModal from '../components/UserFormModal';
 import RoleTag from '../components/RoleTag';
 import type { User } from '../types';
 
 export default function UserListPage() {
-  const dispatch = useAppDispatch();
-  const { message, modal } = App.useApp();
-  const { list, meta, loading } = useAppSelector((state) => state.user);
   const currentUser = useAppSelector((state) => state.auth.user);
   const pagination = usePagination();
   const [searchForm] = Form.useForm();
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
   const [searchTrigger, setSearchTrigger] = useState(0);
+  const { modalOpen, editingItem, handleAdd, handleEdit, handleDelete, setModalOpen } =
+    useCrudTable<User>();
 
   const { current: page, pageSize } = pagination;
 
-  useEffect(() => {
+  const params = useMemo(() => {
+    void searchTrigger;
     const values = searchForm.getFieldsValue();
-    dispatch(
-      fetchUsers({
-        ...values,
-        page,
-        per_page: pageSize,
-      }),
-    );
-  }, [dispatch, searchForm, page, pageSize, searchTrigger]);
+    return {
+      ...values,
+      page,
+      per_page: pageSize,
+    };
+  }, [searchForm, page, pageSize, searchTrigger]);
+
+  const { data, isLoading } = useGetUsersQuery(params);
+  const [deleteUser] = useDeleteUserMutation();
+
+  const list = data?.data ?? [];
+  const meta = data?.meta ?? null;
 
   const handleSearch = () => {
     pagination.reset();
@@ -59,96 +62,83 @@ export default function UserListPage() {
     setSearchTrigger((t) => t + 1);
   };
 
-  const handleAdd = () => {
-    setEditingUser(null);
-    setModalOpen(true);
-  };
-
-  const handleEdit = (user: User) => {
-    setEditingUser(user);
-    setModalOpen(true);
-  };
-
-  const handleDelete = (user: User) => {
-    modal.confirm({
-      title: '确认删除',
-      icon: <ExclamationCircleOutlined />,
-      content: `确定要删除用户「${user.name}」吗？`,
-      okText: '确认',
-      cancelText: '取消',
-      onOk: async () => {
-        try {
-          await dispatch(deleteUser(user.id)).unwrap();
-          message.success('删除成功');
-        } catch (err: unknown) {
-          const errorMsg =
-            typeof err === 'string'
-              ? err
-              : err instanceof Error
-                ? err.message
-                : '删除失败';
-          message.error(errorMsg);
-        }
+  const columns = useMemo(
+    () => [
+      { title: 'ID', dataIndex: 'id', key: 'id', width: 60 },
+      { title: '姓名', dataIndex: 'name', key: 'name' },
+      { title: '邮箱', dataIndex: 'email', key: 'email' },
+      {
+        title: '角色',
+        key: 'roles',
+        render: (_: unknown, record: User) => <RoleTag roles={record.roles} />,
       },
-    });
-  };
-
-  const columns = [
-    { title: 'ID', dataIndex: 'id', key: 'id', width: 60 },
-    { title: '姓名', dataIndex: 'name', key: 'name' },
-    { title: '邮箱', dataIndex: 'email', key: 'email' },
-    {
-      title: '角色',
-      key: 'roles',
-      render: (_: unknown, record: User) => <RoleTag roles={record.roles} />,
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      key: 'status',
-      width: 80,
-      render: (status: boolean) => (
-        <Switch checked={status} size="small" disabled />
-      ),
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'created_at',
-      key: 'created_at',
-      width: 120,
-      render: (v: string) => (v ? new Date(v).toLocaleDateString() : '-'),
-    },
-    {
-      title: '操作',
-      key: 'actions',
-      width: 150,
-      render: (_: unknown, record: User) => (
-        <Space>
-          <PermissionWrapper permission="users.update">
-            <Button size="small" onClick={() => handleEdit(record)}>
-              编辑
-            </Button>
-          </PermissionWrapper>
-          {currentUser && currentUser.id !== record.id && (
-            <PermissionWrapper permission="users.destroy">
-              <Button size="small" danger onClick={() => handleDelete(record)}>
-                删除
+      {
+        title: '状态',
+        dataIndex: 'status',
+        key: 'status',
+        width: 80,
+        render: (status: boolean) => (
+          <Switch checked={status} size="small" disabled />
+        ),
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'created_at',
+        key: 'created_at',
+        width: 120,
+        render: (v: string) => (v ? new Date(v).toLocaleDateString() : '-'),
+      },
+      {
+        title: '操作',
+        key: 'actions',
+        width: 150,
+        render: (_: unknown, record: User) => (
+          <Space>
+            <PermissionWrapper permission="users.update">
+              <Button size="small" onClick={() => handleEdit(record)}>
+                编辑
               </Button>
             </PermissionWrapper>
-          )}
-        </Space>
-      ),
-    },
-  ];
+            {currentUser && currentUser.id !== record.id && (
+              <PermissionWrapper permission="users.destroy">
+                <Button
+                  size="small"
+                  danger
+                  onClick={() =>
+                    handleDelete({
+                      item: record,
+                      onConfirm: async (id) => {
+                        await deleteUser(id).unwrap();
+                      },
+                    })
+                  }
+                >
+                  删除
+                </Button>
+              </PermissionWrapper>
+            )}
+          </Space>
+        ),
+      },
+    ],
+    [currentUser, handleEdit, handleDelete, deleteUser],
+  );
+
+  const paginationConfig = useMemo(
+    () =>
+      meta
+        ? {
+            ...pagination.getPaginationConfig(meta),
+            placement: ['bottomCenter'] as const,
+          }
+        : false,
+    [meta, pagination],
+  );
 
   return (
     <FadeIn stagger>
       <Card style={{ marginBottom: 16, background: 'var(--color-bg-card)' }}>
-        <Form
-          form={searchForm}
-          layout="inline"
-          style={{ marginBottom: 0 }}
-        >
+        <Form form={searchForm} layout="inline" style={{ marginBottom: 0 }}>
           <Form.Item name="name">
             <Input placeholder="姓名" allowClear />
           </Form.Item>
@@ -190,21 +180,14 @@ export default function UserListPage() {
           columns={columns}
           dataSource={list}
           rowKey="id"
-          loading={loading}
-          pagination={
-            meta
-              ? {
-                  ...pagination.getPaginationConfig(meta),
-                  placement: ['bottomCenter'],
-                }
-              : false
-          }
+          loading={isLoading}
+          pagination={paginationConfig}
         />
       </Card>
 
       <UserFormModal
         open={modalOpen}
-        user={editingUser}
+        user={editingItem}
         onCancel={() => setModalOpen(false)}
         onSuccess={() => setModalOpen(false)}
       />
