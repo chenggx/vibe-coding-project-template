@@ -5,6 +5,7 @@ import PageTransition from '@/components/common/PageTransition';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import MobileDrawer from './MobileDrawer';
+import BreadcrumbNav from './BreadcrumbNav';
 import styles from './AppLayout.module.css';
 
 export default function AppLayout() {
@@ -28,6 +29,9 @@ export default function AppLayout() {
         />
         <div className={styles.content}>
           <div className={styles.contentInner}>
+            <div className={styles.breadcrumbWrapper}>
+              <BreadcrumbNav />
+            </div>
             <PageTransition>
               <Outlet />
             </PageTransition>

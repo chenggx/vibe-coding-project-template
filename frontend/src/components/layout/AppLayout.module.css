@@ -24,6 +24,10 @@
   width: 100%;
 }
 
+.breadcrumbWrapper {
+  margin-bottom: 16px;
+}
+
 @media (max-width: 768px) {
   .content {
     padding: 16px;
