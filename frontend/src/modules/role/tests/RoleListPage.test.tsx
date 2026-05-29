@@ -71,10 +71,10 @@ describe('RoleListPage', () => {
 
   it('应该渲染表格列标题', () => {
     renderWithProviders(<RoleListPage />);
-    expect(screen.getByText('标识名')).toBeInTheDocument();
-    expect(screen.getByText('显示名称')).toBeInTheDocument();
-    expect(screen.getByText('描述')).toBeInTheDocument();
-    expect(screen.getByText('关联用户数')).toBeInTheDocument();
-    expect(screen.getByText('操作')).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: '标识名' })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: '显示名称' })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: '描述' })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: '关联用户数' })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: '操作' })).toBeInTheDocument();
   });
 });

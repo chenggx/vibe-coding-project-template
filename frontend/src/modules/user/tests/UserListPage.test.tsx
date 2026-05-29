@@ -45,6 +45,7 @@ vi.mock('@/hooks', () => ({
     setModalOpen: vi.fn(),
     setEditingItem: vi.fn(),
   }),
+  useResponsive: () => ({ isMobile: false, isDesktop: true, isXs: false, isSm: false, isMd: false, isLg: true, isXl: true, isXxl: true }),
 }));
 
 describe('UserListPage', () => {
