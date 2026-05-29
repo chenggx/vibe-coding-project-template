@@ -8,7 +8,9 @@ import {
   Space,
   Button,
   Tag,
+  DatePicker,
 } from 'antd';
+import type { Dayjs } from 'dayjs';
 import type { FormProps } from 'antd';
 import {
   SearchOutlined,
@@ -22,11 +24,7 @@ interface SearchValues {
   email?: string;
   name?: string;
   type?: 'login' | 'failed';
-  browser?: string;
-  os?: string;
-  ip?: string;
-  created_from?: string;
-  created_to?: string;
+  created_range?: [Dayjs, Dayjs];
 }
 
 const typeOptions = [
@@ -59,8 +57,14 @@ export default function LoginLogListPage() {
   const meta = data?.meta ?? null;
 
   const handleSearch: FormProps<SearchValues>['onFinish'] = (values) => {
+    const formattedValues = {
+      ...values,
+      created_from: values.created_range?.[0]?.format('YYYY-MM-DD'),
+      created_to: values.created_range?.[1]?.format('YYYY-MM-DD'),
+    };
+    delete formattedValues.created_range;
     pagination.reset();
-    setSearchValues(values);
+    setSearchValues(formattedValues);
     setTimeout(() => refetch(), 0);
   };
 
@@ -185,39 +189,11 @@ export default function LoginLogListPage() {
             />
           </Form.Item>
           <Form.Item
-            name="browser"
-            label={isMobile ? '浏览器' : undefined}
+            name="created_range"
+            label={isMobile ? '申请日期' : undefined}
             style={{ marginBottom: isMobile ? 12 : 0 }}
           >
-            <Input placeholder="浏览器" allowClear />
-          </Form.Item>
-          <Form.Item
-            name="os"
-            label={isMobile ? '操作系统' : undefined}
-            style={{ marginBottom: isMobile ? 12 : 0 }}
-          >
-            <Input placeholder="操作系统" allowClear />
-          </Form.Item>
-          <Form.Item
-            name="ip"
-            label={isMobile ? 'IP 地址' : undefined}
-            style={{ marginBottom: isMobile ? 12 : 0 }}
-          >
-            <Input placeholder="IP 地址" allowClear />
-          </Form.Item>
-          <Form.Item
-            name="created_from"
-            label={isMobile ? '开始日期' : undefined}
-            style={{ marginBottom: isMobile ? 12 : 0 }}
-          >
-            <Input placeholder="开始日期 (YYYY-MM-DD)" allowClear />
-          </Form.Item>
-          <Form.Item
-            name="created_to"
-            label={isMobile ? '结束日期' : undefined}
-            style={{ marginBottom: isMobile ? 12 : 0 }}
-          >
-            <Input placeholder="结束日期 (YYYY-MM-DD)" allowClear />
+            <DatePicker.RangePicker placeholder={['开始日期', '结束日期']} />
           </Form.Item>
           <Form.Item
             style={{
