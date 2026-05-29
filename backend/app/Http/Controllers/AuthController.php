@@ -132,16 +132,16 @@ class AuthController extends Controller
             return 'macOS';
         }
 
-        if (str_contains($ua, 'Linux')) {
-            return 'Linux';
-        }
-
         if (str_contains($ua, 'Android')) {
             return 'Android';
         }
 
         if (str_contains($ua, 'iPhone') || str_contains($ua, 'iPad')) {
             return 'iOS';
+        }
+
+        if (str_contains($ua, 'Linux')) {
+            return 'Linux';
         }
 
         return 'Other';

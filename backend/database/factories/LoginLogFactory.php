@@ -16,7 +16,7 @@ class LoginLogFactory extends Factory
     {
         return [
             'user_id' => null,
-            'email' => fake()->unique()->safeEmail(),
+            'email' => fake()->safeEmail(),
             'name' => fake()->name(),
             'type' => fake()->randomElement(['login', 'failed']),
             'ip' => fake()->ipv4(),
