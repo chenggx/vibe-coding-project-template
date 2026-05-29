@@ -23,6 +23,9 @@ const MenuListPage = React.lazy(
 const ProfilePage = React.lazy(
   () => import('@/modules/auth/pages/ProfilePage'),
 );
+const NotFoundPage = React.lazy(
+  () => import('@/modules/error/pages/NotFoundPage'),
+);
 
 class RouteErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -161,7 +164,7 @@ export default function AppRoutes() {
         }
       />
       <Route
-        path="/"
+        path="/*"
         element={
           <AuthGuard>
             <AppLayout />
@@ -209,8 +212,23 @@ export default function AppRoutes() {
             </LazyLoader>
           }
         />
+        <Route
+          path="*"
+          element={
+            <LazyLoader>
+              <NotFoundPage />
+            </LazyLoader>
+          }
+        />
       </Route>
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route
+        path="*"
+        element={
+          <LazyLoader>
+            <NotFoundPage />
+          </LazyLoader>
+        }
+      />
     </Routes>
   );
 }
