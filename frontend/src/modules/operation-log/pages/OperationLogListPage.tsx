@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Card,
   Table,
@@ -47,11 +47,9 @@ export default function OperationLogListPage() {
     [searchValues, page, pageSize],
   );
 
-  const { data, isLoading, refetch } = useGetOperationLogsQuery(params);
-
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
+  const { data, isLoading, refetch } = useGetOperationLogsQuery(params, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const list = data?.data ?? [];
   const meta = data?.meta ?? null;

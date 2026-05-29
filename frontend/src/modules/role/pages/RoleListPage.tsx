@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Card, Button, Table, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useAppSelector, usePagination, useCrudTable } from '@/hooks';
@@ -22,13 +22,12 @@ export default function RoleListPage() {
 
   const { current: page, pageSize } = pagination;
 
-  const { data, isLoading, refetch } = useGetRolesQuery({ page, per_page: pageSize });
+  const { data, isLoading } = useGetRolesQuery(
+    { page, per_page: pageSize },
+    { refetchOnMountOrArgChange: true }
+  );
   const [deleteRole] = useDeleteRoleMutation();
   const { data: allMenus = [] } = useGetAllMenusQuery();
-
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
 
   const list = data?.data ?? [];
   const meta = data?.meta ?? null;

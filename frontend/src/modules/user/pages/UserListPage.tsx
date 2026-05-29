@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Card,
   Button,
@@ -51,12 +51,10 @@ export default function UserListPage() {
     [searchValues, page, pageSize],
   );
 
-  const { data, isLoading, refetch } = useGetUsersQuery(params);
+  const { data, isLoading, refetch } = useGetUsersQuery(params, {
+    refetchOnMountOrArgChange: true,
+  });
   const [deleteUser] = useDeleteUserMutation();
-
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
 
   const list = data?.data ?? [];
   const meta = data?.meta ?? null;

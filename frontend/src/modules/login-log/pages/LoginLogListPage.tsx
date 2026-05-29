@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Card,
   Table,
@@ -51,11 +51,9 @@ export default function LoginLogListPage() {
     [searchValues, page, pageSize],
   );
 
-  const { data, isLoading, refetch } = useGetLoginLogsQuery(params);
-
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
+  const { data, isLoading, refetch } = useGetLoginLogsQuery(params, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const list = data?.data ?? [];
   const meta = data?.meta ?? null;
