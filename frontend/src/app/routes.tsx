@@ -23,6 +23,9 @@ const MenuListPage = React.lazy(
 const OperationLogListPage = React.lazy(
   () => import('@/modules/operation-log/pages/OperationLogListPage'),
 );
+const LoginLogListPage = React.lazy(
+  () => import('@/modules/login-log/pages/LoginLogListPage'),
+);
 const ProfilePage = React.lazy(
   () => import('@/modules/auth/pages/ProfilePage'),
 );
@@ -91,6 +94,7 @@ const routePermissionMap: Record<string, string> = {
   '/roles': 'roles.index',
   '/menus': 'menus.all',
   '/operation-logs': 'operation_logs.index',
+  '/login-logs': 'login_logs.index',
 };
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
@@ -213,6 +217,14 @@ export default function AppRoutes() {
           element={
             <LazyLoader>
               <OperationLogListPage />
+            </LazyLoader>
+          }
+        />
+        <Route
+          path="login-logs"
+          element={
+            <LazyLoader>
+              <LoginLogListPage />
             </LazyLoader>
           }
         />

@@ -9,7 +9,7 @@ class MenusSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('menus')->insert([
+        $menus = [
             ['id' => 17, 'parent_id' => null, 'name' => '仪表盘', 'type' => 'menu', 'path' => '/dashboard', 'icon' => 'Dashboard', 'permission' => 'dashboard.index', 'sort_order' => 0, 'created_at' => now(), 'updated_at' => now()],
             ['id' => 1, 'parent_id' => null, 'name' => '系统管理', 'type' => 'catalog', 'path' => null, 'icon' => 'Setting', 'permission' => null, 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
             ['id' => 2, 'parent_id' => 1, 'name' => '用户管理', 'type' => 'menu', 'path' => '/users', 'icon' => 'User', 'permission' => 'users.index', 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
@@ -28,6 +28,11 @@ class MenusSeeder extends Seeder
             ['id' => 15, 'parent_id' => 12, 'name' => '删除菜单', 'type' => 'permission', 'path' => null, 'icon' => null, 'permission' => 'menus.destroy', 'sort_order' => 3, 'created_at' => now(), 'updated_at' => now()],
             ['id' => 16, 'parent_id' => 1, 'name' => '文件上传', 'type' => 'permission', 'path' => null, 'icon' => null, 'permission' => 'upload.store', 'sort_order' => 4, 'created_at' => now(), 'updated_at' => now()],
             ['id' => 18, 'parent_id' => 1, 'name' => '操作日志', 'type' => 'menu', 'path' => '/operation-logs', 'icon' => 'FileText', 'permission' => 'operation_logs.index', 'sort_order' => 5, 'created_at' => now(), 'updated_at' => now()],
-        ]);
+            ['id' => 19, 'parent_id' => 1, 'name' => '登录日志', 'type' => 'menu', 'path' => '/login-logs', 'icon' => 'LogIn', 'permission' => 'login_logs.index', 'sort_order' => 6, 'created_at' => now(), 'updated_at' => now()],
+        ];
+
+        foreach ($menus as $menu) {
+            DB::table('menus')->updateOrInsert(['id' => $menu['id']], $menu);
+        }
     }
 }

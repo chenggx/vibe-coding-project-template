@@ -70,11 +70,12 @@ import type { Role, CreateRoleDto, UpdateRoleDto, FetchRolesParams } from '@/mod
 import type { PaginationMeta } from '@/types/api';
 import type { LoginDto, LoginResponse, CurrentUserResponse, UpdateProfileDto } from '@/modules/auth/types';
 import type { OperationLog, FetchOperationLogsParams } from '@/modules/operation-log/types';
+import type { LoginLog, FetchLoginLogsParams } from '@/modules/login-log/types';
 
 export const adminApi = createApi({
   reducerPath: 'adminApi',
   baseQuery: customBaseQuery,
-  tagTypes: ['User', 'Role', 'Menu', 'Auth', 'Upload', 'OperationLog'],
+  tagTypes: ['User', 'Role', 'Menu', 'Auth', 'Upload', 'OperationLog', 'LoginLog'],
   endpoints: (build) => ({
     uploadFile: build.mutation<UploadResponse, File>({
       query: (file) => {
@@ -188,6 +189,10 @@ export const adminApi = createApi({
       query: (params) => ({ url: '/operation-logs', params }),
       providesTags: ['OperationLog'],
     }),
+    getLoginLogs: build.query<{ data: LoginLog[]; meta: PaginationMeta }, FetchLoginLogsParams | void>({
+      query: (params) => ({ url: '/login-logs', params }),
+      providesTags: ['LoginLog'],
+    }),
   }),
 });
 
@@ -211,4 +216,5 @@ export const {
   useGetCurrentUserQuery,
   useUpdateProfileMutation,
   useGetOperationLogsQuery,
+  useGetLoginLogsQuery,
 } = adminApi;

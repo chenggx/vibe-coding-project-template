@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LoginLogController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OperationLogController;
 use App\Http\Controllers\ProfileController;
@@ -41,5 +42,8 @@ Route::middleware(['auth:sanctum', 'active', 'operation.log'])->group(function (
 
         // 操作日志
         Route::get('/operation-logs', [OperationLogController::class, 'index'])->name('operation_logs.index');
+
+        // 登录日志
+        Route::get('/login-logs', [LoginLogController::class, 'index'])->name('login_logs.index');
     });
 });

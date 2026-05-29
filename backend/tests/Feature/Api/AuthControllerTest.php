@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api;
 
+use App\Models\LoginLog;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -32,6 +33,12 @@ class AuthControllerTest extends TestCase
             ->assertJsonPath('code', 0)
             ->assertJsonPath('data.user.id', 1)
             ->assertJsonPath('data.token', fn ($token) => is_string($token) && $token !== '');
+
+        $this->assertDatabaseHas('login_logs', [
+            'email' => 'admin@example.com',
+            'type' => 'login',
+            'message' => null,
+        ]);
     }
 
     public function test_login_token_can_access_protected_routes(): void
@@ -60,6 +67,12 @@ class AuthControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('code', 10001);
+
+        $this->assertDatabaseHas('login_logs', [
+            'email' => 'admin@example.com',
+            'type' => 'failed',
+            'message' => '邮箱或密码错误',
+        ]);
     }
 
     public function test_login_with_disabled_user(): void
@@ -77,6 +90,13 @@ class AuthControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('code', 10002);
+
+        $this->assertDatabaseHas('login_logs', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'type' => 'failed',
+            'message' => '账号已禁用',
+        ]);
     }
 
     public function test_login_with_expired_user(): void
@@ -94,6 +114,13 @@ class AuthControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('code', 10002);
+
+        $this->assertDatabaseHas('login_logs', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'type' => 'failed',
+            'message' => '账号已过期',
+        ]);
     }
 
     public function test_login_validation_error(): void

@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Auth\LoginRequest;
+use App\Models\LoginLog;
 use App\Models\Menu;
 use App\Models\User;
 use App\Support\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -19,18 +20,26 @@ class AuthController extends Controller
         $user = User::where('email', strtolower($request->email))->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
+            $this->recordLoginLog($request, 'failed', '邮箱或密码错误');
+
             return ApiResponse::error(10001, '邮箱或密码错误');
         }
 
         if (! $user->status) {
+            $this->recordLoginLog($request, 'failed', '账号已禁用', $user);
+
             return ApiResponse::error(10002, '账号已禁用或已过期');
         }
 
         if ($user->expires_at !== null && $user->expires_at <= now()) {
+            $this->recordLoginLog($request, 'failed', '账号已过期', $user);
+
             return ApiResponse::error(10002, '账号已禁用或已过期');
         }
 
         $token = $user->createToken('api', ['*'], now()->addHours(24))->plainTextToken;
+
+        $this->recordLoginLog($request, 'login', null, $user);
 
         return ApiResponse::success([
             'user' => $user->load('roles'),
@@ -64,5 +73,77 @@ class AuthController extends Controller
             'roles' => $user->roles,
             'menus' => $menus,
         ]);
+    }
+
+    private function recordLoginLog(LoginRequest $request, string $type, ?string $message = null, ?User $user = null): void
+    {
+        $ua = $request->userAgent();
+
+        LoginLog::create([
+            'user_id' => $user?->id,
+            'email' => $user?->email ?? strtolower($request->input('email')),
+            'name' => $user?->name,
+            'type' => $type,
+            'ip' => $request->ip(),
+            'user_agent' => $ua,
+            'browser' => $this->parseBrowser($ua),
+            'os' => $this->parseOS($ua),
+            'message' => $message,
+            'created_at' => now(),
+        ]);
+    }
+
+    private function parseBrowser(?string $ua): ?string
+    {
+        if (! $ua) {
+            return null;
+        }
+
+        if (str_contains($ua, 'Edg')) {
+            return 'Edge';
+        }
+
+        if (str_contains($ua, 'Chrome')) {
+            return 'Chrome';
+        }
+
+        if (str_contains($ua, 'Safari')) {
+            return 'Safari';
+        }
+
+        if (str_contains($ua, 'Firefox')) {
+            return 'Firefox';
+        }
+
+        return 'Other';
+    }
+
+    private function parseOS(?string $ua): ?string
+    {
+        if (! $ua) {
+            return null;
+        }
+
+        if (str_contains($ua, 'Windows')) {
+            return 'Windows';
+        }
+
+        if (str_contains($ua, 'Mac OS')) {
+            return 'macOS';
+        }
+
+        if (str_contains($ua, 'Linux')) {
+            return 'Linux';
+        }
+
+        if (str_contains($ua, 'Android')) {
+            return 'Android';
+        }
+
+        if (str_contains($ua, 'iPhone') || str_contains($ua, 'iPad')) {
+            return 'iOS';
+        }
+
+        return 'Other';
     }
 }
