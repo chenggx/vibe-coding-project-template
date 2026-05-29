@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Card,
   Button,
@@ -59,12 +59,10 @@ export default function AnnouncementListPage() {
     [searchValues, page, pageSize],
   );
 
-  const { data, isLoading, refetch } = useGetAnnouncementsQuery(params);
+  const { data, isLoading, refetch } = useGetAnnouncementsQuery(params, {
+    refetchOnMountOrArgChange: true,
+  });
   const [deleteAnnouncement] = useDeleteAnnouncementMutation();
-
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
 
   const list = data?.data ?? [];
   const meta = data?.meta ?? null;

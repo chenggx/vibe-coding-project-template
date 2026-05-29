@@ -1,5 +1,6 @@
 import { Modal, Tag, Space } from 'antd';
 import { PushpinOutlined } from '@ant-design/icons';
+import DOMPurify from 'dompurify';
 import type { Announcement } from '../types';
 
 interface AnnouncementDetailModalProps {
@@ -41,7 +42,7 @@ export default function AnnouncementDetailModal({
       <div
         className="ql-editor"
         style={{ padding: 0, minHeight: 100 }}
-        dangerouslySetInnerHTML={{ __html: announcement.content }}
+        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(announcement.content) }}
       />
     </Modal>
   );

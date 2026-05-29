@@ -22,8 +22,8 @@ export function usePagination(options: UsePaginationOptions = {}) {
 
   const paginationConfig = useMemo(
     () => (meta: PaginationMeta | null) => ({
-      current: meta?.current_page ?? current,
-      pageSize: meta?.per_page ?? pageSize,
+      current,
+      pageSize,
       total: meta?.total ?? 0,
       showSizeChanger: true,
       showQuickJumper: true,
@@ -33,5 +33,14 @@ export function usePagination(options: UsePaginationOptions = {}) {
     [current, pageSize, onChange],
   );
 
-  return { current, pageSize, onChange, reset, getPaginationConfig: paginationConfig };
+  return useMemo(
+    () => ({
+      current,
+      pageSize,
+      onChange,
+      reset,
+      getPaginationConfig: paginationConfig,
+    }),
+    [current, pageSize, onChange, reset, paginationConfig],
+  );
 }
