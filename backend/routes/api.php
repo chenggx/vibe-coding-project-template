@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LoginLogController;
 use App\Http\Controllers\MenuController;
@@ -26,6 +27,10 @@ Route::middleware(['auth:sanctum', 'active', 'operation.log'])->group(function (
     // 菜单查询（所有认证用户可用）
     Route::get('/menus', [MenuController::class, 'index'])->name('menus.index');
 
+    // 公告查询（所有认证用户可用）
+    Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
+    Route::get('/announcements/{id}', [AnnouncementController::class, 'show'])->name('announcements.show');
+
     // 需要菜单权限的管理接口
     Route::middleware('menu.permission')->group(function () {
         // 用户管理
@@ -45,5 +50,8 @@ Route::middleware(['auth:sanctum', 'active', 'operation.log'])->group(function (
 
         // 登录日志
         Route::get('/login-logs', [LoginLogController::class, 'index'])->name('login_logs.index');
+
+        // 公告管理
+        Route::apiResource('announcements', AnnouncementController::class)->except(['index', 'show']);
     });
 });

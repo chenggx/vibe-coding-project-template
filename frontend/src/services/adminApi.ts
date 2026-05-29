@@ -71,11 +71,12 @@ import type { PaginationMeta } from '@/types/api';
 import type { LoginDto, LoginResponse, CurrentUserResponse, UpdateProfileDto } from '@/modules/auth/types';
 import type { OperationLog, FetchOperationLogsParams } from '@/modules/operation-log/types';
 import type { LoginLog, FetchLoginLogsParams } from '@/modules/login-log/types';
+import type { Announcement, CreateAnnouncementDto, UpdateAnnouncementDto, FetchAnnouncementsParams } from '@/modules/announcement/types';
 
 export const adminApi = createApi({
   reducerPath: 'adminApi',
   baseQuery: customBaseQuery,
-  tagTypes: ['User', 'Role', 'Menu', 'Auth', 'Upload', 'OperationLog', 'LoginLog'],
+  tagTypes: ['User', 'Role', 'Menu', 'Auth', 'Upload', 'OperationLog', 'LoginLog', 'Announcement'],
   endpoints: (build) => ({
     uploadFile: build.mutation<UploadResponse, File>({
       query: (file) => {
@@ -193,6 +194,27 @@ export const adminApi = createApi({
       query: (params) => ({ url: '/login-logs', params }),
       providesTags: ['LoginLog'],
     }),
+    getAnnouncements: build.query<{ data: Announcement[]; meta: PaginationMeta }, FetchAnnouncementsParams | void>({
+      query: (params) => ({ url: '/announcements', params }),
+      providesTags: (result) =>
+        result ? [...result.data.map((a) => ({ type: 'Announcement' as const, id: a.id })), 'Announcement'] : ['Announcement'],
+    }),
+    getAnnouncement: build.query<Announcement, number>({
+      query: (id) => `/announcements/${id}`,
+      providesTags: (result, error, id) => [{ type: 'Announcement', id }],
+    }),
+    createAnnouncement: build.mutation<Announcement, CreateAnnouncementDto>({
+      query: (body) => ({ url: '/announcements', method: 'POST', body }),
+      invalidatesTags: ['Announcement'],
+    }),
+    updateAnnouncement: build.mutation<Announcement, { id: number; data: UpdateAnnouncementDto }>({
+      query: ({ id, data }) => ({ url: `/announcements/${id}`, method: 'PUT', body: data }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Announcement', id }, 'Announcement'],
+    }),
+    deleteAnnouncement: build.mutation<void, number>({
+      query: (id) => ({ url: `/announcements/${id}`, method: 'DELETE' }),
+      invalidatesTags: ['Announcement'],
+    }),
   }),
 });
 
@@ -217,4 +239,9 @@ export const {
   useUpdateProfileMutation,
   useGetOperationLogsQuery,
   useGetLoginLogsQuery,
+  useGetAnnouncementsQuery,
+  useGetAnnouncementQuery,
+  useCreateAnnouncementMutation,
+  useUpdateAnnouncementMutation,
+  useDeleteAnnouncementMutation,
 } = adminApi;

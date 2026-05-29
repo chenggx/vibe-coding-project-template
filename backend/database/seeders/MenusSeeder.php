@@ -28,7 +28,12 @@ class MenusSeeder extends Seeder
             ['id' => 15, 'parent_id' => 12, 'name' => '删除菜单', 'type' => 'permission', 'path' => null, 'icon' => null, 'permission' => 'menus.destroy', 'sort_order' => 3, 'created_at' => now(), 'updated_at' => now()],
             ['id' => 16, 'parent_id' => 1, 'name' => '文件上传', 'type' => 'permission', 'path' => null, 'icon' => null, 'permission' => 'upload.store', 'sort_order' => 4, 'created_at' => now(), 'updated_at' => now()],
             ['id' => 18, 'parent_id' => 1, 'name' => '操作日志', 'type' => 'menu', 'path' => '/operation-logs', 'icon' => 'FileText', 'permission' => 'operation_logs.index', 'sort_order' => 5, 'created_at' => now(), 'updated_at' => now()],
-            ['id' => 19, 'parent_id' => 1, 'name' => '登录日志', 'type' => 'menu', 'path' => '/login-logs', 'icon' => 'LogIn', 'permission' => 'login_logs.index', 'sort_order' => 6, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 19, 'parent_id' => 1, 'name' => '登录日志', 'type' => 'menu', 'path' => '/login-logs', 'icon' => 'FileText', 'permission' => 'login_logs.index', 'sort_order' => 6, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 20, 'parent_id' => 1, 'name' => '公告管理', 'type' => 'menu', 'path' => '/announcements', 'icon' => 'Notification', 'permission' => 'announcements.index', 'sort_order' => 7, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 21, 'parent_id' => 20, 'name' => '查看公告', 'type' => 'permission', 'path' => null, 'icon' => null, 'permission' => 'announcements.show', 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 22, 'parent_id' => 20, 'name' => '新增公告', 'type' => 'permission', 'path' => null, 'icon' => null, 'permission' => 'announcements.store', 'sort_order' => 2, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 23, 'parent_id' => 20, 'name' => '编辑公告', 'type' => 'permission', 'path' => null, 'icon' => null, 'permission' => 'announcements.update', 'sort_order' => 3, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 24, 'parent_id' => 20, 'name' => '删除公告', 'type' => 'permission', 'path' => null, 'icon' => null, 'permission' => 'announcements.destroy', 'sort_order' => 4, 'created_at' => now(), 'updated_at' => now()],
         ];
 
         foreach ($menus as $menu) {

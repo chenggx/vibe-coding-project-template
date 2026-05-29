@@ -5,8 +5,11 @@ import {
   MenuOutlined,
   SafetyOutlined,
   SettingOutlined,
+  NotificationOutlined,
+  PushpinOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { useAppSelector } from '@/hooks';
 import FadeIn from '@/components/common/FadeIn';
 import CountUp from '@/components/common/CountUp';
@@ -14,10 +17,13 @@ import {
   useGetUsersQuery,
   useGetRolesQuery,
   useGetAllMenusQuery,
+  useGetAnnouncementsQuery,
 } from '@/services/adminApi';
 import StatsCard from '../components/StatsCard';
 import WelcomeSection from '../components/WelcomeSection';
 import ActivityTimeline from '../components/ActivityTimeline';
+import type { Announcement } from '@/modules/announcement/types';
+import AnnouncementDetailModal from '@/modules/announcement/components/AnnouncementDetailModal';
 import styles from './DashboardPage.module.css';
 
 export default function DashboardPage() {
@@ -26,10 +32,25 @@ export default function DashboardPage() {
   const { data: usersData } = useGetUsersQuery({ page: 1, per_page: 1 });
   const { data: rolesData } = useGetRolesQuery({ page: 1, per_page: 1 });
   const { data: allMenus = [] } = useGetAllMenusQuery();
+  const { data: announcementsData } = useGetAnnouncementsQuery(
+    {
+      status: true,
+      per_page: 5,
+    },
+    { refetchOnMountOrArgChange: true },
+  );
 
   const userCount = usersData?.meta?.total ?? 0;
   const roleCount = rolesData?.meta?.total ?? 0;
   const menuCount = allMenus.length;
+  const announcements = announcementsData?.data ?? [];
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detailAnnouncement, setDetailAnnouncement] = useState<Announcement | null>(null);
+
+  const handleOpenDetail = (item: Announcement) => {
+    setDetailAnnouncement(item);
+    setDetailOpen(true);
+  };
 
   const quickActions = [
     {
@@ -126,7 +147,61 @@ export default function DashboardPage() {
             </Card>
           </Col>
         </Row>
+
+        <Row gutter={[24, 24]} style={{ marginTop: 32 }}>
+          <Col xs={24}>
+            <Card
+              title={
+                <span>
+                  <NotificationOutlined style={{ marginRight: 8 }} />
+                  系统公告
+                </span>
+              }
+              className={styles.card}
+            >
+              {announcements.length === 0 ? (
+                <div style={{ textAlign: 'center', color: '#999', padding: '24px 0' }}>
+                  暂无公告
+                </div>
+              ) : (
+                <div>
+                  {announcements.map((item: Announcement) => (
+                    <div
+                      key={item.id}
+                      style={{
+                        padding: '12px 0',
+                        borderBottom: '1px solid var(--color-border)',
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => handleOpenDetail(item)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          handleOpenDetail(item);
+                        }
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                        {item.pinned && <PushpinOutlined style={{ color: '#ff4d4f' }} />}
+                        <span style={{ fontWeight: 500, flex: 1 }}>{item.title}</span>
+                        <span style={{ fontSize: 12, color: '#999' }}>
+                          {new Date(item.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Card>
+          </Col>
+        </Row>
       </div>
+      <AnnouncementDetailModal
+        open={detailOpen}
+        announcement={detailAnnouncement}
+        onClose={() => setDetailOpen(false)}
+      />
     </FadeIn>
   );
 }

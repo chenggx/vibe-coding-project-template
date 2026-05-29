@@ -76,3 +76,4 @@ php artisan admin:reset-password
 
 - Ant Design 6 中，`Drawer` 的 `width` 已废弃，使用 `size` 替代。
 - Ant Design 6 中，`Table` 分页的 `position` 已废弃，使用 `placement` 替代。
+- **RTK Query 搜索按钮需手动强制刷新**：`useGetXxxQuery` 在查询参数不变时会命中缓存、跳过网络请求。如果列表页需要"点击搜索即刷新"的交互（即使筛选条件没变），必须在 `handleSearch` 中调用 `refetch()`，否则用户会感觉"搜索按钮没反应"。

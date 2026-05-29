@@ -18,6 +18,7 @@ import {
   MailOutlined,
   MenuOutlined,
   MessageOutlined,
+  NotificationOutlined,
   PieChartOutlined,
   PlusOutlined,
   SafetyOutlined,
@@ -68,6 +69,7 @@ export const AVAILABLE_ICONS: IconOption[] = [
   { name: 'Upload', component: UploadOutlined },
   { name: 'Download', component: DownloadOutlined },
   { name: 'Message', component: MessageOutlined },
+  { name: 'Notification', component: NotificationOutlined },
 ];
 
 export const iconMap: Record<string, React.ReactNode> = AVAILABLE_ICONS.reduce(

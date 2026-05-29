@@ -26,6 +26,9 @@ const OperationLogListPage = React.lazy(
 const LoginLogListPage = React.lazy(
   () => import('@/modules/login-log/pages/LoginLogListPage'),
 );
+const AnnouncementListPage = React.lazy(
+  () => import('@/modules/announcement/pages/AnnouncementListPage'),
+);
 const ProfilePage = React.lazy(
   () => import('@/modules/auth/pages/ProfilePage'),
 );
@@ -225,6 +228,14 @@ export default function AppRoutes() {
           element={
             <LazyLoader>
               <LoginLogListPage />
+            </LazyLoader>
+          }
+        />
+        <Route
+          path="announcements"
+          element={
+            <LazyLoader>
+              <AnnouncementListPage />
             </LazyLoader>
           }
         />
