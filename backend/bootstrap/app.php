@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\CheckMenuPermission;
 use App\Http\Middleware\EnsureUserIsActive;
+use App\Http\Middleware\OperationLogMiddleware;
 use App\Support\ApiResponse;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -20,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'active' => EnsureUserIsActive::class,
             'menu.permission' => CheckMenuPermission::class,
+            'operation.log' => OperationLogMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

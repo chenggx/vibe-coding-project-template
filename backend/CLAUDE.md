@@ -61,6 +61,7 @@ Controller 中不要直接 `return response()->json(...)`，统一使用 `ApiRes
 - `app/Http/Controllers/` — 控制器，保持精简，业务逻辑下沉到 Service 或模型
 - `app/Http/Requests/{Auth,Menu,Profile,Role,Upload,User}/` — 按领域分目录的 FormRequest 验证类
 - `app/Models/` — Eloquent 模型，User 使用 `HasMenuPermissions` Trait 处理权限关联
+- `app/Models/Traits/Filterable.php` — 可筛选 Trait，配合 `QueryFilter` 实现列表过滤。**所有需要支持 `->filter()` 查询的模型必须 use 此 Trait**
 - `app/Services/` — 业务服务层（如 `PermissionService`、`StorageService`）
 - `app/Support/ApiResponse.php` — 全局响应封装，禁止绕过
 - `app/Http/Middleware/CheckMenuPermission.php` — 菜单权限校验

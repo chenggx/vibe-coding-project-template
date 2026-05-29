@@ -69,11 +69,12 @@ import type { User, CreateUserDto, UpdateUserDto, FetchUsersParams } from '@/mod
 import type { Role, CreateRoleDto, UpdateRoleDto, FetchRolesParams } from '@/modules/role/types';
 import type { PaginationMeta } from '@/types/api';
 import type { LoginDto, LoginResponse, CurrentUserResponse, UpdateProfileDto } from '@/modules/auth/types';
+import type { OperationLog, FetchOperationLogsParams } from '@/modules/operation-log/types';
 
 export const adminApi = createApi({
   reducerPath: 'adminApi',
   baseQuery: customBaseQuery,
-  tagTypes: ['User', 'Role', 'Menu', 'Auth', 'Upload'],
+  tagTypes: ['User', 'Role', 'Menu', 'Auth', 'Upload', 'OperationLog'],
   endpoints: (build) => ({
     uploadFile: build.mutation<UploadResponse, File>({
       query: (file) => {
@@ -183,6 +184,10 @@ export const adminApi = createApi({
         }
       },
     }),
+    getOperationLogs: build.query<{ data: OperationLog[]; meta: PaginationMeta }, FetchOperationLogsParams | void>({
+      query: (params) => ({ url: '/operation-logs', params }),
+      providesTags: ['OperationLog'],
+    }),
   }),
 });
 
@@ -205,4 +210,5 @@ export const {
   useLogoutMutation,
   useGetCurrentUserQuery,
   useUpdateProfileMutation,
+  useGetOperationLogsQuery,
 } = adminApi;

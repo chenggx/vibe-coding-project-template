@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, App } from 'antd';
 import {
   PlusOutlined,
@@ -17,8 +17,12 @@ import type { MenuTree } from '@/types/menu';
 
 export default function MenuListPage() {
   const { message, modal } = App.useApp();
-  const { data: allMenus = [], isLoading } = useGetAllMenusQuery();
+  const { data: allMenus = [], isLoading, refetch } = useGetAllMenusQuery();
   const [deleteMenu] = useDeleteMenuMutation();
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingMenu, setEditingMenu] = useState<MenuTree | null>(null);
 

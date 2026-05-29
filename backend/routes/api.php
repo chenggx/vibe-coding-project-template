@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\OperationLogController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UploadController;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login'])->name('login')->middleware('throttle:5,1');
 
 // 需要认证的接口
-Route::middleware(['auth:sanctum', 'active'])->group(function () {
+Route::middleware(['auth:sanctum', 'active', 'operation.log'])->group(function () {
     // 无需菜单权限
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/user', [AuthController::class, 'me'])->name('user.me');
@@ -37,5 +38,8 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
         Route::post('/menus', [MenuController::class, 'store'])->name('menus.store');
         Route::put('/menus/{id}', [MenuController::class, 'update'])->name('menus.update');
         Route::delete('/menus/{id}', [MenuController::class, 'destroy'])->name('menus.destroy');
+
+        // 操作日志
+        Route::get('/operation-logs', [OperationLogController::class, 'index'])->name('operation_logs.index');
     });
 });

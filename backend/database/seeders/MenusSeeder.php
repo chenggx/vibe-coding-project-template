@@ -27,6 +27,7 @@ class MenusSeeder extends Seeder
             ['id' => 14, 'parent_id' => 12, 'name' => '编辑菜单', 'type' => 'permission', 'path' => null, 'icon' => null, 'permission' => 'menus.update', 'sort_order' => 2, 'created_at' => now(), 'updated_at' => now()],
             ['id' => 15, 'parent_id' => 12, 'name' => '删除菜单', 'type' => 'permission', 'path' => null, 'icon' => null, 'permission' => 'menus.destroy', 'sort_order' => 3, 'created_at' => now(), 'updated_at' => now()],
             ['id' => 16, 'parent_id' => 1, 'name' => '文件上传', 'type' => 'permission', 'path' => null, 'icon' => null, 'permission' => 'upload.store', 'sort_order' => 4, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 18, 'parent_id' => 1, 'name' => '操作日志', 'type' => 'menu', 'path' => '/operation-logs', 'icon' => 'FileText', 'permission' => 'operation_logs.index', 'sort_order' => 5, 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }
