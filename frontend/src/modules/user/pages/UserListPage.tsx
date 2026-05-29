@@ -64,6 +64,7 @@ export default function UserListPage() {
   const handleSearch: FormProps<SearchValues>['onFinish'] = (values) => {
     pagination.reset();
     setSearchValues(values);
+    setTimeout(() => refetch(), 0);
   };
 
   const handleReset = () => {
