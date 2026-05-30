@@ -75,7 +75,7 @@ export default function AnnouncementFormModal({
       open={open}
       onCancel={onCancel}
       onOk={handleSubmit}
-      destroyOnClose
+      destroyOnHidden
       width={800}
     >
       <Form form={form} layout="vertical" initialValues={{ status: false, pinned: false }}>
