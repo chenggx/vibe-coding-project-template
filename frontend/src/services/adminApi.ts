@@ -137,7 +137,7 @@ export const adminApi = createApi({
     }),
     deleteRole: build.mutation<void, number>({
       query: (id) => ({ url: `/roles/${id}`, method: 'DELETE' }),
-      invalidatesTags: ['Role'],
+      invalidatesTags: (result, error) => (error ? [] : ['Role']),
     }),
     login: build.mutation<LoginResponse, LoginDto>({
       query: (body) => ({ url: '/login', method: 'POST', body }),

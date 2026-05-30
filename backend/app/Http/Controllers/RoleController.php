@@ -71,10 +71,14 @@ class RoleController extends Controller
 
     public function destroy(int $id)
     {
-        $role = Role::find($id);
+        $role = Role::withCount('users')->find($id);
 
         if (! $role) {
             return ApiResponse::error(10006, '角色不存在');
+        }
+
+        if ($role->users_count > 0) {
+            return ApiResponse::error(10011, '该角色下还存在用户，无法删除');
         }
 
         $role->menus()->detach();

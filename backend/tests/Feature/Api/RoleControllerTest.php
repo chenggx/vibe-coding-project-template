@@ -118,4 +118,22 @@ class RoleControllerTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonPath('code', 10006);
     }
+
+    public function test_destroy_fails_when_role_has_users(): void
+    {
+        Sanctum::actingAs($this->admin, ['*']);
+        $role = Role::create([
+            'name' => 'temp',
+            'display_name' => 'Temp',
+        ]);
+
+        $this->admin->roles()->attach($role);
+
+        $response = $this->deleteJson("/api/roles/{$role->id}");
+
+        $response->assertStatus(200)
+            ->assertJsonPath('code', 10011);
+
+        $this->assertDatabaseHas('roles', ['id' => $role->id]);
+    }
 }

@@ -68,24 +68,22 @@ export default function RoleListPage() {
                 编辑
               </Button>
             </PermissionWrapper>
-            {currentUser && currentUser.id !== record.id && (
-              <PermissionWrapper permission="roles.destroy">
-                <Button
-                  size="small"
-                  danger
-                  onClick={() =>
-                    handleDelete({
-                      item: record,
-                      onConfirm: async (id) => {
-                        await deleteRole(id).unwrap();
-                      },
-                    })
-                  }
-                >
-                  删除
-                </Button>
-              </PermissionWrapper>
-            )}
+            <PermissionWrapper permission="roles.destroy">
+              <Button
+                size="small"
+                danger
+                onClick={() =>
+                  handleDelete({
+                    item: record,
+                    onConfirm: async (id) => {
+                      await deleteRole(id).unwrap();
+                    },
+                  })
+                }
+              >
+                删除
+              </Button>
+            </PermissionWrapper>
           </Space>
         ),
       },
