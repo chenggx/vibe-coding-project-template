@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-
 
 class UserSeeder extends Seeder
 {
@@ -36,8 +35,11 @@ class UserSeeder extends Seeder
             ]
         );
 
-        DB::table('user_has_roles')->insert([
-            ['user_id' => 2, 'role_id' => 1]
-        ]);
+        $testUser = User::where('email', 'test@example.com')->first();
+        $agentRole = Role::where('name', 'agent')->first();
+
+        if ($testUser && $agentRole) {
+            $testUser->roles()->sync([$agentRole->id]);
+        }
     }
 }

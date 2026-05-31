@@ -56,15 +56,15 @@ class UserControllerTest extends TestCase
         Sanctum::actingAs($this->admin, ['*']);
 
         $response = $this->postJson('/api/users', [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'New Test User',
+            'email' => 'newtest@example.com',
             'password' => '123456',
             'role_ids' => [1],
         ]);
 
         $response->assertStatus(200)
             ->assertJsonPath('code', 0)
-            ->assertJsonPath('data.name', 'Test User');
+            ->assertJsonPath('data.name', 'New Test User');
 
         $this->assertDatabaseHas('user_has_roles', [
             'user_id' => $response->json('data.id'),
@@ -113,7 +113,7 @@ class UserControllerTest extends TestCase
         $response = $this->putJson("/api/users/{$user->id}", [
             'name' => 'Updated Name',
             'email' => $user->email,
-            'role_ids' => [2],
+            'role_ids' => [1],
         ]);
 
         $response->assertStatus(200)
@@ -150,7 +150,7 @@ class UserControllerTest extends TestCase
     public function test_destroy_admin_returns_10005(): void
     {
         $user = User::factory()->create();
-        $user->roles()->sync([2]);
+        $user->roles()->sync([1]);
         Sanctum::actingAs($user, ['*']);
 
         $response = $this->deleteJson('/api/users/'.$this->admin->id);

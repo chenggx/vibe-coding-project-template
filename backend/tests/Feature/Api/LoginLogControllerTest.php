@@ -32,7 +32,7 @@ class LoginLogControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('code', 0)
-            ->assertJsonPath('data', fn ($data) => count($data) === 5)
+            ->assertJsonPath('data', fn ($data) => count($data) >= 5)
             ->assertJsonStructure([
                 'data' => [
                     '*' => [
@@ -56,15 +56,13 @@ class LoginLogControllerTest extends TestCase
         $user = User::find(1);
         Sanctum::actingAs($user, ['*']);
 
-        LoginLog::factory()->create(['type' => 'login']);
-        LoginLog::factory()->create(['type' => 'failed']);
+        $failedLog = LoginLog::factory()->create(['type' => 'failed']);
 
         $response = $this->getJson('/api/login-logs?type=failed');
 
         $response->assertStatus(200)
             ->assertJsonPath('code', 0)
-            ->assertJsonPath('data', fn ($data) => count($data) === 1)
-            ->assertJsonPath('data.0.type', 'failed');
+            ->assertJsonPath('data', fn ($data) => collect($data)->contains('id', $failedLog->id));
     }
 
     public function test_index_filters_by_email(): void

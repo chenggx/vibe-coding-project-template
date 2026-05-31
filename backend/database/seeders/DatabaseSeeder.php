@@ -12,7 +12,12 @@ class DatabaseSeeder extends Seeder
             MenusSeeder::class,
             RolesSeeder::class,
             UserSeeder::class,
-            TestSeeder::class, // 测试数据
         ]);
+
+        if (! app()->isProduction()) {
+            $this->call([
+                TestSeeder::class,
+            ]);
+        }
     }
 }

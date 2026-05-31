@@ -103,12 +103,10 @@ class TestSeeder extends Seeder
                 ]
             );
 
-            // 随机分配一个角色
-            if (!empty($roles)) {
+            // 随机分配一个角色（使用 sync 确保用户只有一个角色）
+            if (! empty($roles)) {
                 $roleId = $roles[array_rand($roles)];
-                if (!$user->roles()->where('role_id', $roleId)->exists()) {
-                    $user->roles()->attach($roleId);
-                }
+                $user->roles()->sync([$roleId]);
             }
         }
     }
@@ -155,16 +153,17 @@ class TestSeeder extends Seeder
      */
     private function createTestLoginLogs(int $count): void
     {
-        $users = User::select('id', 'name')->get()->toArray();
-        $userEmails = User::select('id', 'email')->get()->pluck('email', 'id')->toArray();
+        $users = User::select('id', 'name', 'email')->get();
+        $usersArray = $users->toArray();
+        $userEmails = $users->pluck('email', 'id')->toArray();
 
         $browsers = ['Chrome/120.0', 'Firefox/121.0', 'Safari/17.2', 'Edge/120.0'];
         $oses = ['Windows 10', 'macOS 14.2', 'Ubuntu 22.04', 'iOS 17.2'];
         $ips = ['192.168.1.100', '10.0.0.1', '172.16.0.1', '127.0.0.1'];
 
         for ($i = 0; $i < $count; $i++) {
-            $user = $users[array_rand($users)];
-            $email = $userEmails[$user['id']] ?? "unknown@example.com";
+            $user = $usersArray[array_rand($usersArray)];
+            $email = $userEmails[$user['id']] ?? 'unknown@example.com';
             $type = rand(0, 10) < 8 ? 'login' : 'failed'; // 80% 成功
 
             LoginLog::create([

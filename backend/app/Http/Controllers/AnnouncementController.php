@@ -58,8 +58,15 @@ class AnnouncementController extends Controller
 
         $announcement->title = $validated['title'];
         $announcement->content = $validated['content'];
-        $announcement->status = $request->boolean('status', $announcement->status);
-        $announcement->pinned = $request->boolean('pinned', $announcement->pinned);
+
+        if ($request->has('status')) {
+            $announcement->status = $request->boolean('status');
+        }
+
+        if ($request->has('pinned')) {
+            $announcement->pinned = $request->boolean('pinned');
+        }
+
         $announcement->save();
 
         return ApiResponse::success($announcement, '更新成功');
