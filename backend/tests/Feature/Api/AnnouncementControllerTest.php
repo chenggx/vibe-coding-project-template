@@ -59,7 +59,7 @@ class AnnouncementControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('code', 0)
-            ->assertJsonPath('data', fn ($data) => collect($data)->contains('id', $draft->id));
+            ->assertJsonPath('data', fn ($data) => collect($data)->contains('id', $draft->id) && collect($data)->every(fn ($item) => $item['status'] === false));
     }
 
     public function test_index_sorts_by_pinned_first(): void

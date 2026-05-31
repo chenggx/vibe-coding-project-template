@@ -33,6 +33,7 @@ class LoginLogControllerTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonPath('code', 0)
             ->assertJsonPath('data', fn ($data) => count($data) >= 5)
+            ->assertJsonPath('meta.per_page', 15)
             ->assertJsonStructure([
                 'data' => [
                     '*' => [
@@ -62,7 +63,7 @@ class LoginLogControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('code', 0)
-            ->assertJsonPath('data', fn ($data) => collect($data)->contains('id', $failedLog->id));
+            ->assertJsonPath('data', fn ($data) => collect($data)->contains('id', $failedLog->id) && collect($data)->every(fn ($item) => $item['type'] === 'failed'));
     }
 
     public function test_index_filters_by_email(): void
