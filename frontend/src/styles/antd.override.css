@@ -3,17 +3,9 @@
   border-radius: 6px;
 }
 
-.ant-btn:active {
-  transform: scale(0.98);
-}
-
 .ant-card {
   border-radius: 8px;
   box-shadow: var(--shadow);
-}
-
-.ant-card:active {
-  transform: scale(0.99);
 }
 
 .ant-modal .ant-modal-content {
