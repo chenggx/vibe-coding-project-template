@@ -1,6 +1,6 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Card, Form, Input, Button, Typography, message } from 'antd';
+import { Card, Form, Input, Button, Typography, Alert } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useAppSelector } from '@/hooks';
 import FadeIn from '@/components/common/FadeIn';
@@ -19,7 +19,7 @@ export default function LoginPage() {
   const location = useLocation();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const [login, { isLoading }] = useLoginMutation();
-  const [messageApi, contextHolder] = message.useMessage();
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const from = (location.state as { from?: { pathname?: string } } | undefined)?.from?.pathname || '/dashboard';
 
@@ -31,14 +31,15 @@ export default function LoginPage() {
 
   const onFinish = useCallback(
     async (values: LoginFormValues) => {
+      setErrorMsg(null);
       try {
         await login(values).unwrap();
         navigate(from, { replace: true });
       } catch (err: unknown) {
-        messageApi.error(getApiErrorMessage(err, '登录失败'));
+        setErrorMsg(getApiErrorMessage(err, '登录失败'));
       }
     },
-    [login, navigate, messageApi, from],
+    [login, navigate, from],
   );
 
   return (
@@ -55,7 +56,6 @@ export default function LoginPage() {
         padding: '16px',
       }}
     >
-      {contextHolder}
       <FadeIn>
         <Card
           style={{
@@ -73,6 +73,15 @@ export default function LoginPage() {
             </Title>
             <Text type="secondary">请登录您的账户以继续</Text>
           </div>
+
+          {errorMsg && (
+            <Alert
+              message={errorMsg}
+              type="error"
+              showIcon
+              style={{ marginBottom: 24 }}
+            />
+          )}
 
           <Form
             name="login"
@@ -104,7 +113,7 @@ export default function LoginPage() {
               />
             </Form.Item>
 
-            <Form.Item style={{ marginBottom: 16 }}>
+            <Form.Item style={{ marginBottom: 0 }}>
               <Button
                 type="primary"
                 htmlType="submit"

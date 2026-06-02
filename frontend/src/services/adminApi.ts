@@ -45,7 +45,9 @@ const customBaseQuery: BaseQueryFn<
   if (code !== 0) {
     if (code === 10002) {
       api.dispatch(resetAuth());
-      window.location.href = '/login';
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
     return {
       error: {

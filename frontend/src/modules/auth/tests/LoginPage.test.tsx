@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { http, HttpResponse } from 'msw';
+import { server } from '@/mocks/server';
 import { renderWithProviders } from '@/tests/utils';
 import LoginPage from '../pages/LoginPage';
 
@@ -51,5 +53,32 @@ describe('LoginPage', () => {
     expect(
       await screen.findByText('请输入邮箱地址'),
     ).toBeInTheDocument();
+  });
+
+  it('禁用或过期用户登录应该显示错误提示', async () => {
+    server.use(
+      http.post('http://localhost:8000/api/login', () => {
+        return HttpResponse.json({
+          code: 10002,
+          message: '账号已禁用或已过期',
+          data: null,
+        });
+      }),
+    );
+
+    const user = userEvent.setup();
+    renderWithProviders(<LoginPage />);
+
+    const emailInput = screen.getByPlaceholderText('邮箱');
+    const passwordInput = screen.getByPlaceholderText('密码');
+    const submitButton = screen.getByRole('button', { name: /登/ });
+
+    await user.type(emailInput, 'disabled@example.com');
+    await user.type(passwordInput, 'password');
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('账号已禁用或已过期')).toBeInTheDocument();
+    });
   });
 });
