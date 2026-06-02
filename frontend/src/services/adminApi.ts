@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
-import { resetAuth, setToken, setUserAndPermissions } from '@/modules/auth/slice';
+import { resetAuth, setToken, setUserAndPermissions, updateUser } from '@/modules/auth/slice';
 import { setToken as setTokenStorage, clearToken } from '@/utils/token';
 import type { RootState } from '@/store';
 import type { ApiResponse, PaginatedResponse } from '@/types/api';
@@ -175,12 +175,12 @@ export const adminApi = createApi({
         }
       },
     }),
-    updateProfile: build.mutation<CurrentUserResponse, UpdateProfileDto>({
+    updateProfile: build.mutation<User, UpdateProfileDto>({
       query: (body) => ({ url: '/profile', method: 'PUT', body }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          dispatch(setUserAndPermissions(data));
+          dispatch(updateUser(data));
         } catch {
           // silently ignore
         }
