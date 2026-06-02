@@ -17,6 +17,6 @@ class AnnouncementFilter extends QueryFilter
 
     public function status(mixed $value): void
     {
-        $this->builder->when(filled($value), fn ($query) => $query->where('status', $value));
+        $this->builder->when(filled($value), fn ($query) => $query->where('status', filter_var($value, FILTER_VALIDATE_BOOLEAN)));
     }
 }
