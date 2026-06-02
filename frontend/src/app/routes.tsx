@@ -35,6 +35,9 @@ const ProfilePage = React.lazy(
 const NotFoundPage = React.lazy(
   () => import('@/modules/error/pages/NotFoundPage'),
 );
+const ForbiddenPage = React.lazy(
+  () => import('@/modules/error/pages/ForbiddenPage'),
+);
 
 class RouteErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -143,18 +146,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
     user?.id !== 1 &&
     !permissions.includes(requiredPermission)
   ) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-        }}
-      >
-        无权访问
-      </div>
-    );
+    return <Navigate to="/forbidden" replace />;
   }
 
   return <>{children}</>;
@@ -244,6 +236,14 @@ export default function AppRoutes() {
           element={
             <LazyLoader>
               <ProfilePage />
+            </LazyLoader>
+          }
+        />
+        <Route
+          path="forbidden"
+          element={
+            <LazyLoader>
+              <ForbiddenPage />
             </LazyLoader>
           }
         />
