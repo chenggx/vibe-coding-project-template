@@ -4,7 +4,6 @@ import {
   Button,
   Table,
   Space,
-  Switch,
   Form,
   Input,
 } from 'antd';
@@ -82,20 +81,22 @@ export default function UserListPage() {
         render: (_: unknown, record: User) => <RoleTag roles={record.roles} />,
       },
       {
-        title: '状态',
-        dataIndex: 'status',
-        key: 'status',
-        width: 80,
-        render: (status: boolean) => (
-          <Switch checked={status} size="small" disabled />
-        ),
-      },
-      {
         title: '创建时间',
         dataIndex: 'created_at',
         key: 'created_at',
-        width: 120,
-        render: (v: string) => (v ? new Date(v).toLocaleDateString() : '-'),
+        width: 180,
+        render: (v: string) =>
+          v
+            ? new Date(v).toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false,
+              })
+            : '-',
       },
       {
         title: '操作',
