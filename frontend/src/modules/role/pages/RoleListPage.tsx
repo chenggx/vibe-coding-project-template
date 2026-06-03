@@ -55,7 +55,7 @@ export default function RoleListPage() {
         title: '关联用户数',
         dataIndex: 'users_count',
         key: 'users_count',
-        width: 100,
+        width: 120,
       },
       {
         title: '操作',
