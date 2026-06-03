@@ -1,4 +1,4 @@
-import { Card, Col, Row, Tag, Empty } from 'antd';
+import { Card, Col, Row, Tag, Empty, Timeline } from 'antd';
 import {
   NotificationOutlined,
   PushpinOutlined,
@@ -89,20 +89,25 @@ export default function DashboardPage() {
               }
               className={styles.card}
             >
-              <div className={styles.changelogList}>
-                {changelogData.map((item) => (
-                  <div key={item.version} className={styles.changelogItem}>
-                    <div className={styles.changelogHeader}>
-                      <Tag color="blue" className={styles.versionTag}>{item.version}</Tag>
-                      <span className={styles.changelogDate}>{item.date}</span>
-                    </div>
-                    <ul className={styles.changelogChanges}>
-                      {item.changes.map((change, index) => (
-                        <li key={index}>{change}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+              <div className={styles.changelogTimeline}>
+                <Timeline
+                  items={changelogData.map((item) => ({
+                    color: 'blue',
+                    children: (
+                      <div className={styles.changelogItem}>
+                        <div className={styles.changelogHeader}>
+                          <Tag color="blue" className={styles.versionTag}>{item.version}</Tag>
+                          <span className={styles.changelogDate}>{item.date}</span>
+                        </div>
+                        <ul className={styles.changelogChanges}>
+                          {item.changes.map((change, index) => (
+                            <li key={index}>{change}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ),
+                  }))}
+                />
               </div>
             </Card>
           </Col>
