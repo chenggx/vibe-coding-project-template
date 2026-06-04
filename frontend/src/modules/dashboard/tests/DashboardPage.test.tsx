@@ -18,7 +18,7 @@ describe('DashboardPage', () => {
     expect(screen.getByText(/Admin/)).toBeInTheDocument();
   });
 
-  it('应该渲染统计卡片', () => {
+  it('应该渲染系统公告和更新日志卡片', () => {
     renderWithProviders(<DashboardPage />, {
       preloadedState: {
         auth: {
@@ -29,12 +29,11 @@ describe('DashboardPage', () => {
         },
       },
     });
-    expect(screen.getByText('总用户数')).toBeInTheDocument();
-    expect(screen.getByText('总角色数')).toBeInTheDocument();
-    expect(screen.getByText('总菜单数')).toBeInTheDocument();
+    expect(screen.getByText('系统公告')).toBeInTheDocument();
+    expect(screen.getByText('更新日志')).toBeInTheDocument();
   });
 
-  it('应该渲染快捷操作', () => {
+  it('应该渲染更新日志内容', () => {
     renderWithProviders(<DashboardPage />, {
       preloadedState: {
         auth: {
@@ -45,7 +44,6 @@ describe('DashboardPage', () => {
         },
       },
     });
-    expect(screen.getByText('用户管理')).toBeInTheDocument();
-    expect(screen.getByText('角色管理')).toBeInTheDocument();
+    expect(screen.getByText('v1.0.0')).toBeInTheDocument();
   });
 });
