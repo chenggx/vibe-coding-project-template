@@ -48,6 +48,8 @@ class OperationLogMiddleware
     private function resolveActionName(Request $request, string $routeName): string
     {
         return match ($routeName) {
+            'login' => '用户登录',
+            'logout' => '用户登出',
             'users.store' => '创建用户',
             'users.update' => '更新用户',
             'users.destroy' => '删除用户',
@@ -57,6 +59,9 @@ class OperationLogMiddleware
             'menus.store' => '创建菜单',
             'menus.update' => '更新菜单',
             'menus.destroy' => '删除菜单',
+            'announcements.store' => '创建公告',
+            'announcements.update' => '更新公告',
+            'announcements.destroy' => '删除公告',
             'profile.update' => '更新个人资料',
             'upload.store' => '上传文件',
             default => $routeName,
